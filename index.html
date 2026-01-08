@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AlertesDeriv</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQWxlcnRlc0Rlcml2Iiwic2hvcnRfbmFtZSI6IkFsZXJ0ZXMiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBhMGExMiIsInRoZW1lX2NvbG9yIjoiIzAwZDRmZiJ9">
+    <meta name="theme-color" content="#00d4ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --primary-glow: rgba(0, 212, 255, 0.4);
+            --secondary: #ff006e;
+            --accent: #8b5cf6;
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --danger: #ff3366;
+            --bg-dark: #0a0a12;
+            --bg-card: rgba(15, 15, 25, 0.95);
+            --bg-input: rgba(30, 30, 50, 0.8);
+            --text: #ffffff;
+            --text-muted: #8892a0;
+            --border: rgba(0, 212, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 0, 110, 0.05) 0%, transparent 70%);
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image:
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 40px var(--primary-glow);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 10px 40px var(--primary-glow); }
+            50% { box-shadow: 0 10px 60px var(--primary-glow), 0 0 100px var(--primary-glow); }
+        }
+
+        .logo-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 3px;
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(20px);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px 20px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 16px;
+            font-family: 'Rajdhani', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--bg-dark);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Main App */
+        .app-container {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+        }
+
+        .header-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .server-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: var(--bg-input);
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--danger);
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        .status-dot.online {
+            background: var(--success);
+            animation: none;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        /* Add Alert Button */
+        .btn-add {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            color: var(--bg-dark);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px var(--primary-glow);
+        }
+
+        /* Alert Cards */
+        .alerts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .alert-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .alert-card.triggered {
+            border-color: var(--success);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .alert-info {
+            flex: 1;
+        }
+
+        .alert-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .alert-details {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .alert-details .condition {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            background: var(--bg-input);
+            border-radius: 20px;
+            margin-left: 10px;
+        }
+
+        .condition.above { color: var(--success); }
+        .condition.below { color: var(--danger); }
+
+        .alert-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-icon.delete:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* Config Section */
+        .config-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 15px;
+        }
+
+        .config-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .config-title i.fa-whatsapp { color: #25D366; }
+        .config-title i.fa-telegram { color: #0088cc; }
+
+        .toggle {
+            width: 50px;
+            height: 28px;
+            background: var(--bg-input);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle.active {
+            background: var(--success);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle.active::after {
+            transform: translateX(22px);
+        }
+
+        .config-body {
+            display: none;
+        }
+
+        .config-body.visible {
+            display: block;
+        }
+
+        .config-row {
+            margin-bottom: 15px;
+        }
+
+        .config-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .config-row label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .config-row input {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 16px;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .config-row input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-save-config {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            border-radius: 10px;
+            color: var(--bg-dark);
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 20px;
+            backdrop-filter: blur(20px);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item i {
+            font-size: 1.3rem;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s ease-out;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 16px;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .condition-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .condition-btn {
+            padding: 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .condition-btn.selected {
+            border-color: var(--primary);
+            background: var(--primary-glow);
+        }
+
+        .condition-btn.above.selected {
+            border-color: var(--success);
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--success);
+        }
+
+        .condition-btn.below.selected {
+            border-color: var(--danger);
+            background: rgba(255, 51, 102, 0.2);
+            color: var(--danger);
+        }
+
+        /* Price Display */
+        .current-price {
+            text-align: center;
+            padding: 15px;
+            background: var(--bg-input);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .price-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .price-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Settings Page */
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .settings-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .settings-info i {
+            font-size: 1.2rem;
+            color: var(--primary);
+            width: 25px;
+        }
+
+        .settings-text {
+            font-weight: 500;
+        }
+
+        .settings-sub {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .odai-display {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            color: var(--primary);
+            background: var(--bg-input);
+            padding: 8px 15px;
+            border-radius: 8px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-card);
+            border: 1px solid var(--success);
+            padding: 15px 25px;
+            border-radius: 12px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+
+        .toast.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.error {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* Responsive */
+        @media (max-width: 360px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h1 class="logo-title">AlertesDeriv</h1>
+        </div>
+        <div class="login-card">
+            <div class="input-group">
+                <label>Code ODAI</label>
+                <input type="text" id="odaiInput" placeholder="Entrez votre code ODAI">
+            </div>
+            <button class="btn btn-primary" onclick="login()">
+                <i class="fas fa-sign-in-alt"></i> Connexion
+            </button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container" id="appContainer">
+        <header class="header">
+            <h1 class="header-title">AlertesDeriv</h1>
+            <div class="server-status">
+                <div class="status-dot" id="serverStatus"></div>
+                <span id="serverStatusText">Connexion...</span>
+            </div>
+        </header>
+
+        <div class="content">
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboardPage">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalAlerts">0</div>
+                        <div class="stat-label">Alertes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="triggeredAlerts">0</div>
+                        <div class="stat-label">Déclenchées</div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-bell"></i>
+                        Mes Alertes
+                    </h2>
+                    <button class="btn-add" onclick="openAlertModal()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <div class="alerts-list" id="alertsList">
+                    <div class="empty-state">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>Aucune alerte configurée</p>
+                    </div>
+                </div>
+
+                <!-- WhatsApp Config -->
+                <div class="config-section">
+                    <div class="config-header">
+                        <div class="config-title">
+                            <i class="fab fa-whatsapp"></i>
+                            WhatsApp
+                        </div>
+                        <div class="toggle" id="whatsappToggle" onclick="toggleConfig('whatsapp')"></div>
+                    </div>
+                    <div class="config-body" id="whatsappConfig">
+                        <div class="config-row">
+                            <label>Numéro de téléphone (avec indicatif)</label>
+                            <input type="tel" id="whatsappPhone" placeholder="+33612345678">
+                        </div>
+                        <button class="btn-save-config" onclick="saveWhatsAppConfig()">
+                            Enregistrer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Telegram Config -->
+                <div class="config-section">
+                    <div class="config-header">
+                        <div class="config-title">
+                            <i class="fab fa-telegram"></i>
+                            Telegram
+                        </div>
+                        <div class="toggle" id="telegramToggle" onclick="toggleConfig('telegram')"></div>
+                    </div>
+                    <div class="config-body" id="telegramConfig">
+                        <div class="config-row">
+                            <label>Bot Token</label>
+                            <input type="text" id="telegramToken" placeholder="123456:ABC-DEF...">
+                        </div>
+                        <div class="config-row">
+                            <label>Chat ID</label>
+                            <input type="text" id="telegramChatId" placeholder="123456789">
+                        </div>
+                        <button class="btn-save-config" onclick="saveTelegramConfig()">
+                            Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div class="page" id="settingsPage">
+                <h2 class="section-title" style="margin-bottom: 20px;">
+                    <i class="fas fa-cog"></i>
+                    Paramètres
+                </h2>
+
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <i class="fas fa-id-card"></i>
+                        <div>
+                            <div class="settings-text">Code ODAI</div>
+                            <div class="settings-sub">Votre identifiant</div>
+                        </div>
+                    </div>
+                    <div class="odai-display" id="odaiDisplay">-</div>
+                </div>
+
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <i class="fas fa-server"></i>
+                        <div>
+                            <div class="settings-text">Serveur</div>
+                            <div class="settings-sub" id="serverUrl">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-item" onclick="logout()" style="cursor: pointer;">
+                    <div class="settings-info">
+                        <i class="fas fa-sign-out-alt" style="color: var(--danger);"></i>
+                        <div>
+                            <div class="settings-text" style="color: var(--danger);">Déconnexion</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="showPage('dashboard')">
+                <i class="fas fa-home"></i>
+                <span>Accueil</span>
+            </div>
+            <div class="nav-item" onclick="showPage('settings')">
+                <i class="fas fa-cog"></i>
+                <span>Réglages</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Add Alert Modal -->
+    <div class="modal-overlay" id="alertModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Nouvelle Alerte</h3>
+                <button class="modal-close" onclick="closeAlertModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nom de l'alerte</label>
+                    <input type="text" id="alertName" placeholder="Ex: Bitcoin 100k">
+                </div>
+
+                <div class="form-group">
+                    <label>Symbole</label>
+                    <select id="alertSymbol" onchange="updateCurrentPrice()">
+                        <option value="">Sélectionner...</option>
+                        <optgroup label="Crypto">
+                            <option value="cryBTCUSD">Bitcoin (BTC/USD)</option>
+                            <option value="cryETHUSD">Ethereum (ETH/USD)</option>
+                            <option value="cryLTCUSD">Litecoin (LTC/USD)</option>
+                            <option value="cryBNBUSD">BNB (BNB/USD)</option>
+                        </optgroup>
+                        <optgroup label="Forex">
+                            <option value="frxEURUSD">EUR/USD</option>
+                            <option value="frxGBPUSD">GBP/USD</option>
+                            <option value="frxUSDJPY">USD/JPY</option>
+                            <option value="frxAUDUSD">AUD/USD</option>
+                        </optgroup>
+                        <optgroup label="Indices">
+                            <option value="R_100">Volatility 100</option>
+                            <option value="R_75">Volatility 75</option>
+                            <option value="R_50">Volatility 50</option>
+                            <option value="R_25">Volatility 25</option>
+                            <option value="R_10">Volatility 10</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="current-price" id="currentPriceDisplay" style="display: none;">
+                    <div class="price-label">Prix actuel</div>
+                    <div class="price-value" id="currentPriceValue">-</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Prix cible</label>
+                    <input type="number" id="alertPrice" placeholder="0.00" step="any">
+                </div>
+
+                <div class="form-group">
+                    <label>Condition</label>
+                    <div class="condition-buttons">
+                        <button class="condition-btn above" onclick="selectCondition('above')">
+                            <i class="fas fa-arrow-up"></i> Au-dessus
+                        </button>
+                        <button class="condition-btn below" onclick="selectCondition('below')">
+                            <i class="fas fa-arrow-down"></i> En-dessous
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="createAlert()">
+                    <i class="fas fa-plus"></i> Créer l'alerte
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Configuration
+        const SERVER_URL = 'https://alertes-deriv-server.onrender.com';
+        const FIREBASE_URL = 'https://alertes-deriv-licenses-default-rtdb.europe-west1.firebasedatabase.app';
+
+        // State
+        let currentODAI = null;
+        let alerts = [];
+        let selectedCondition = null;
+        let derivWs = null;
+        let prices = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            checkStoredODAI();
+        });
+
+        function checkStoredODAI() {
+            // Since localStorage isn't available, check if we have a hash-based session
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#odai=')) {
+                const odai = hash.substring(6);
+                if (odai) {
+                    verifyLicense(odai);
+                }
+            }
+        }
+
+        async function login() {
+            const odai = document.getElementById('odaiInput').value.trim();
+            if (!odai) {
+                showToast('Veuillez entrer votre code ODAI', true);
+                return;
+            }
+            await verifyLicense(odai);
+        }
+
+        async function verifyLicense(odai) {
+            try {
+                const response = await fetch(`${FIREBASE_URL}/licenses/${odai}.json`);
+                const data = await response.json();
+
+                if (data && data.active) {
+                    currentODAI = odai;
+                    window.location.hash = `odai=${odai}`;
+                    showApp();
+                } else {
+                    showToast('Licence invalide ou expirée', true);
+                }
+            } catch (error) {
+                console.error('License check error:', error);
+                showToast('Erreur de connexion', true);
+            }
+        }
+
+        function showApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            document.getElementById('odaiDisplay').textContent = currentODAI;
+            document.getElementById('serverUrl').textContent = SERVER_URL;
+
+            connectDeriv();
+            checkServerStatus();
+            loadAlerts();
+
+            setInterval(checkServerStatus, 30000);
+        }
+
+        function logout() {
+            currentODAI = null;
+            window.location.hash = '';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('appContainer').style.display = 'none';
+            if (derivWs) {
+                derivWs.close();
+            }
+        }
+
+        // Deriv WebSocket for live prices
+        function connectDeriv() {
+            derivWs = new WebSocket('wss://ws.binaryws.com/websockets/v3?app_id=1089');
+
+            derivWs.onopen = () => {
+                console.log('Deriv connected');
+            };
+
+            derivWs.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.tick) {
+                        prices[data.tick.symbol] = data.tick.quote;
+                        updatePriceDisplay(data.tick.symbol);
+                    }
+                } catch (e) {}
+            };
+
+            derivWs.onclose = () => {
+                setTimeout(connectDeriv, 5000);
+            };
+        }
+
+        function subscribeToSymbol(symbol) {
+            if (derivWs && derivWs.readyState === WebSocket.OPEN) {
+                derivWs.send(JSON.stringify({ ticks: symbol, subscribe: 1 }));
+            }
+        }
+
+        function updateCurrentPrice() {
+            const symbol = document.getElementById('alertSymbol').value;
+            const priceDisplay = document.getElementById('currentPriceDisplay');
+
+            if (symbol) {
+                priceDisplay.style.display = 'block';
+                subscribeToSymbol(symbol);
+                updatePriceDisplay(symbol);
+            } else {
+                priceDisplay.style.display = 'none';
+            }
+        }
+
+        function updatePriceDisplay(symbol) {
+            const selectedSymbol = document.getElementById('alertSymbol').value;
+            if (symbol === selectedSymbol && prices[symbol]) {
+                document.getElementById('currentPriceValue').textContent = prices[symbol].toFixed(5);
+            }
+        }
+
+        // Server Status
+        async function checkServerStatus() {
+            try {
+                const response = await fetch(`${SERVER_URL}/health`);
+                const data = await response.json();
+
+                document.getElementById('serverStatus').classList.add('online');
+                document.getElementById('serverStatusText').textContent = 'En ligne';
+            } catch (error) {
+                document.getElementById('serverStatus').classList.remove('online');
+                document.getElementById('serverStatusText').textContent = 'Hors ligne';
+            }
+        }
+
+        // Alerts Management
+        async function loadAlerts() {
+            try {
+                const response = await fetch(`${SERVER_URL}/alerts/${currentODAI}`);
+                alerts = await response.json();
+                renderAlerts();
+            } catch (error) {
+                console.error('Load alerts error:', error);
+            }
+        }
+
+        function renderAlerts() {
+            const container = document.getElementById('alertsList');
+
+            document.getElementById('totalAlerts').textContent = alerts.length;
+            document.getElementById('triggeredAlerts').textContent = alerts.filter(a => a.triggered).length;
+
+            if (alerts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>Aucune alerte configurée</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = alerts.map(alert => `
+                <div class="alert-card ${alert.triggered ? 'triggered' : ''}">
+                    <div class="alert-info">
+                        <div class="alert-name">${alert.name}</div>
+                        <div class="alert-details">
+                            ${alert.symbol}
+                            <span class="condition ${alert.condition}">
+                                <i class="fas fa-arrow-${alert.condition === 'above' ? 'up' : 'down'}"></i>
+                                ${alert.price}
+                            </span>
+                            ${alert.triggered ? '<span style="color: var(--success); margin-left: 10px;">✓ Déclenché</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        ${alert.triggered ? `
+                            <button class="btn-icon" onclick="resetAlert('${alert.id}')" title="Réactiver">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                        ` : ''}
+                        <button class="btn-icon delete" onclick="deleteAlert('${alert.id}')" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openAlertModal() {
+            document.getElementById('alertModal').classList.add('visible');
+            document.getElementById('alertName').value = '';
+            document.getElementById('alertSymbol').value = '';
+            document.getElementById('alertPrice').value = '';
+            document.getElementById('currentPriceDisplay').style.display = 'none';
+            selectedCondition = null;
+            document.querySelectorAll('.condition-btn').forEach(btn => btn.classList.remove('selected'));
+        }
+
+        function closeAlertModal() {
+            document.getElementById('alertModal').classList.remove('visible');
+        }
+
+        function selectCondition(condition) {
+            selectedCondition = condition;
+            document.querySelectorAll('.condition-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            document.querySelector(`.condition-btn.${condition}`).classList.add('selected');
+        }
+
+        async function createAlert() {
+            const name = document.getElementById('alertName').value.trim();
+            const symbol = document.getElementById('alertSymbol').value;
+            const price = parseFloat(document.getElementById('alertPrice').value);
+
+            if (!name || !symbol || !price || !selectedCondition) {
+                showToast('Veuillez remplir tous les champs', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${SERVER_URL}/alerts/${currentODAI}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, symbol, price, condition: selectedCondition })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    closeAlertModal();
+                    loadAlerts();
+                    showToast('Alerte créée avec succès');
+                }
+            } catch (error) {
+                showToast('Erreur lors de la création', true);
+            }
+        }
+
+        async function deleteAlert(alertId) {
+            try {
+                await fetch(`${SERVER_URL}/alerts/${currentODAI}/${alertId}`, { method: 'DELETE' });
+                loadAlerts();
+                showToast('Alerte supprimée');
+            } catch (error) {
+                showToast('Erreur lors de la suppression', true);
+            }
+        }
+
+        async function resetAlert(alertId) {
+            try {
+                await fetch(`${SERVER_URL}/alerts/${currentODAI}/${alertId}/reset`, { method: 'POST' });
+                loadAlerts();
+                showToast('Alerte réactivée');
+            } catch (error) {
+                showToast('Erreur lors de la réactivation', true);
+            }
+        }
+
+        // Config Toggles
+        function toggleConfig(type) {
+            const toggle = document.getElementById(`${type}Toggle`);
+            const config = document.getElementById(`${type}Config`);
+
+            toggle.classList.toggle('active');
+            config.classList.toggle('visible');
+        }
+
+        async function saveWhatsAppConfig() {
+            const phone = document.getElementById('whatsappPhone').value.trim();
+            if (!phone) {
+                showToast('Veuillez entrer un numéro', true);
+                return;
+            }
+
+            try {
+                await fetch(`${SERVER_URL}/config/${currentODAI}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ whatsapp: phone })
+                });
+                showToast('WhatsApp configuré');
+            } catch (error) {
+                showToast('Erreur de sauvegarde', true);
+            }
+        }
+
+        async function saveTelegramConfig() {
+            const botToken = document.getElementById('telegramToken').value.trim();
+            const chatId = document.getElementById('telegramChatId').value.trim();
+
+            if (!botToken || !chatId) {
+                showToast('Veuillez remplir tous les champs', true);
+                return;
+            }
+
+            try {
+                await fetch(`${SERVER_URL}/config/${currentODAI}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram: { botToken, chatId } })
+                });
+                showToast('Telegram configuré');
+            } catch (error) {
+                showToast('Erreur de sauvegarde', true);
+            }
+        }
+
+        // Navigation
+        function showPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            document.getElementById(`${page}Page`).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Toast
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast visible' + (isError ? ' error' : '');
+
+            setTimeout(() => {
+                toast.classList.remove('visible');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
