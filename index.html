@@ -837,12 +837,16 @@
         </div>
         <div class="login-card">
             <div class="input-group">
-                <label>Code ODAI</label>
-                <input type="text" id="odaiInput" placeholder="Entrez votre code ODAI">
+                <label>Clé de Licence</label>
+                <input type="text" id="licenseInput" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" style="text-transform: uppercase; letter-spacing: 2px;">
             </div>
-            <button class="btn btn-primary" onclick="login()">
+            <div id="licenseError" style="color: #ff3366; font-size: 0.9rem; margin-bottom: 15px; display: none;"></div>
+            <button class="btn btn-primary" onclick="login()" id="loginBtn">
                 <i class="fas fa-sign-in-alt"></i> Connexion
             </button>
+            <div style="margin-top: 20px; font-size: 0.85rem; color: var(--text-muted); text-align: center;">
+                Pas de licence ? Contactez l'administrateur
+            </div>
         </div>
     </div>
 
@@ -941,13 +945,23 @@
 
                 <div class="settings-item">
                     <div class="settings-info">
-                        <i class="fas fa-id-card"></i>
+                        <i class="fas fa-key"></i>
                         <div>
-                            <div class="settings-text">Code ODAI</div>
-                            <div class="settings-sub">Votre identifiant</div>
+                            <div class="settings-text">Licence</div>
+                            <div class="settings-sub" id="licenseKeyDisplay">-</div>
                         </div>
                     </div>
-                    <div class="odai-display" id="odaiDisplay">-</div>
+                    <div class="odai-display" id="licenseExpiry">-</div>
+                </div>
+
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <i class="fas fa-user"></i>
+                        <div>
+                            <div class="settings-text">Client</div>
+                            <div class="settings-sub" id="clientNameDisplay">-</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="settings-item">
@@ -1063,7 +1077,8 @@
         const FIREBASE_URL = 'https://alertes-deriv-licenses-default-rtdb.europe-west1.firebasedatabase.app';
 
         // State
-        let currentODAI = null;
+        let currentLicenseKey = null;
+        let currentLicenseData = null;
         let alerts = [];
         let selectedCondition = null;
         let derivWs = null;
@@ -1071,52 +1086,119 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            checkStoredODAI();
+            checkStoredLicense();
+            setupLicenseInput();
         });
 
-        function checkStoredODAI() {
-            // Since localStorage isn't available, check if we have a hash-based session
+        // Auto-format license key input (XXXX-XXXX-XXXX-XXXX)
+        function setupLicenseInput() {
+            const input = document.getElementById('licenseInput');
+            input.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+                let formatted = '';
+                for (let i = 0; i < value.length && i < 16; i++) {
+                    if (i > 0 && i % 4 === 0) formatted += '-';
+                    formatted += value[i];
+                }
+                e.target.value = formatted;
+            });
+
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') login();
+            });
+        }
+
+        function checkStoredLicense() {
             const hash = window.location.hash;
-            if (hash && hash.startsWith('#odai=')) {
-                const odai = hash.substring(6);
-                if (odai) {
-                    verifyLicense(odai);
+            if (hash && hash.startsWith('#license=')) {
+                const licenseKey = hash.substring(9);
+                if (licenseKey) {
+                    verifyLicense(licenseKey);
                 }
             }
         }
 
         async function login() {
-            const odai = document.getElementById('odaiInput').value.trim();
-            if (!odai) {
-                showToast('Veuillez entrer votre code ODAI', true);
+            const licenseKey = document.getElementById('licenseInput').value.trim().toUpperCase();
+            const errorDiv = document.getElementById('licenseError');
+            const loginBtn = document.getElementById('loginBtn');
+
+            errorDiv.style.display = 'none';
+
+            if (!licenseKey || licenseKey.length < 19) {
+                errorDiv.textContent = 'Veuillez entrer une clé de licence valide';
+                errorDiv.style.display = 'block';
                 return;
             }
-            await verifyLicense(odai);
+
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Vérification...';
+            loginBtn.disabled = true;
+
+            await verifyLicense(licenseKey);
+
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Connexion';
+            loginBtn.disabled = false;
         }
 
-        async function verifyLicense(odai) {
+        async function verifyLicense(licenseKey) {
+            const errorDiv = document.getElementById('licenseError');
+
             try {
-                const response = await fetch(`${FIREBASE_URL}/licenses/${odai}.json`);
+                const response = await fetch(`${FIREBASE_URL}/licenses/${licenseKey}.json`);
                 const data = await response.json();
 
-                if (data && data.active) {
-                    currentODAI = odai;
-                    window.location.hash = `odai=${odai}`;
-                    showApp();
-                } else {
-                    showToast('Licence invalide ou expirée', true);
+                if (!data) {
+                    errorDiv.textContent = '❌ Licence non trouvée';
+                    errorDiv.style.display = 'block';
+                    return;
                 }
+
+                // Check if license is active
+                if (!data.active) {
+                    errorDiv.textContent = '❌ Licence désactivée';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+
+                // Check expiration date
+                const expiresAt = new Date(data.expiresAt);
+                const now = new Date();
+
+                if (expiresAt < now) {
+                    const expiredDate = expiresAt.toLocaleDateString('fr-FR');
+                    errorDiv.textContent = `❌ Licence expirée le ${expiredDate}`;
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+
+                // License is valid!
+                currentLicenseKey = licenseKey;
+                currentLicenseData = data;
+                window.location.hash = `license=${licenseKey}`;
+                showApp();
+
             } catch (error) {
                 console.error('License check error:', error);
-                showToast('Erreur de connexion', true);
+                errorDiv.textContent = '❌ Erreur de connexion au serveur';
+                errorDiv.style.display = 'block';
             }
         }
 
         function showApp() {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appContainer').style.display = 'block';
-            document.getElementById('odaiDisplay').textContent = currentODAI;
+
+            // Display license info
+            document.getElementById('licenseKeyDisplay').textContent = currentLicenseKey;
             document.getElementById('serverUrl').textContent = SERVER_URL;
+
+            if (currentLicenseData) {
+                const expiresAt = new Date(currentLicenseData.expiresAt);
+                const daysLeft = Math.ceil((expiresAt - new Date()) / (1000 * 60 * 60 * 24));
+                document.getElementById('licenseExpiry').textContent = `${daysLeft}j restants`;
+                document.getElementById('licenseExpiry').style.color = daysLeft < 7 ? '#ff3366' : '#00ff88';
+                document.getElementById('clientNameDisplay').textContent = currentLicenseData.clientName || 'Client';
+            }
 
             connectDeriv();
             checkServerStatus();
@@ -1126,10 +1208,13 @@
         }
 
         function logout() {
-            currentODAI = null;
+            currentLicenseKey = null;
+            currentLicenseData = null;
             window.location.hash = '';
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('appContainer').style.display = 'none';
+            document.getElementById('licenseInput').value = '';
+            document.getElementById('licenseError').style.display = 'none';
             if (derivWs) {
                 derivWs.close();
             }
@@ -1201,7 +1286,7 @@
         // Alerts Management
         async function loadAlerts() {
             try {
-                const response = await fetch(`${SERVER_URL}/alerts/${currentODAI}`);
+                const response = await fetch(`${SERVER_URL}/alerts/${currentLicenseKey}`);
                 alerts = await response.json();
                 renderAlerts();
             } catch (error) {
@@ -1285,7 +1370,7 @@
             }
 
             try {
-                const response = await fetch(`${SERVER_URL}/alerts/${currentODAI}`, {
+                const response = await fetch(`${SERVER_URL}/alerts/${currentLicenseKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, symbol, price, condition: selectedCondition })
@@ -1304,7 +1389,7 @@
 
         async function deleteAlert(alertId) {
             try {
-                await fetch(`${SERVER_URL}/alerts/${currentODAI}/${alertId}`, { method: 'DELETE' });
+                await fetch(`${SERVER_URL}/alerts/${currentLicenseKey}/${alertId}`, { method: 'DELETE' });
                 loadAlerts();
                 showToast('Alerte supprimée');
             } catch (error) {
@@ -1314,7 +1399,7 @@
 
         async function resetAlert(alertId) {
             try {
-                await fetch(`${SERVER_URL}/alerts/${currentODAI}/${alertId}/reset`, { method: 'POST' });
+                await fetch(`${SERVER_URL}/alerts/${currentLicenseKey}/${alertId}/reset`, { method: 'POST' });
                 loadAlerts();
                 showToast('Alerte réactivée');
             } catch (error) {
@@ -1339,7 +1424,7 @@
             }
 
             try {
-                await fetch(`${SERVER_URL}/config/${currentODAI}`, {
+                await fetch(`${SERVER_URL}/config/${currentLicenseKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ whatsapp: phone })
@@ -1360,7 +1445,7 @@
             }
 
             try {
-                await fetch(`${SERVER_URL}/config/${currentODAI}`, {
+                await fetch(`${SERVER_URL}/config/${currentLicenseKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ telegram: { botToken, chatId } })
