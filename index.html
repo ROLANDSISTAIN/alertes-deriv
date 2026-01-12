@@ -2,1095 +2,1351 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AlertesDeriv</title>
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQWxlcnRlc0Rlcml2Iiwic2hvcnRfbmFtZSI6IkFsZXJ0ZXMiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBhMGExMiIsInRoZW1lX2NvbG9yIjoiIzAwZDRmZiJ9">
-    <meta name="theme-color" content="#00d4ff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #00d4ff;
-            --primary-glow: rgba(0, 212, 255, 0.4);
-            --secondary: #ff006e;
-            --accent: #8b5cf6;
-            --success: #00ff88;
-            --warning: #ffaa00;
-            --danger: #ff3366;
-            --bg-dark: #0a0a12;
-            --bg-card: rgba(15, 15, 25, 0.95);
-            --bg-input: rgba(30, 30, 50, 0.8);
-            --text: #ffffff;
-            --text-muted: #8892a0;
-            --border: rgba(0, 212, 255, 0.2);
-        }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Alertes Deriv Pro</title>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+            --primary: #7c3aed;
+            --primary-light: #a855f7;
+            --primary-dark: #5b21b6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --whatsapp: #25d366;
+            --telegram: #0088cc;
         }
 
         body {
-            font-family: 'Rajdhani', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            overflow-x: hidden;
+            padding: 10px;
+            padding-top: calc(10px + var(--safe-top));
+            padding-bottom: calc(80px + var(--safe-bottom));
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
-        /* Animated Background */
-        .bg-animation {
+        /* ============ LICENSE SCREEN ============ */
+        .license-screen {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background:
-                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(255, 0, 110, 0.05) 0%, transparent 70%);
-        }
-
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background-image:
-                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: gridMove 20s linear infinite;
-        }
-
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
-
-        /* Login Screen */
-        .login-screen {
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            z-index: 9999;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
             padding: 20px;
+            color: white;
+            overflow-y: auto;
         }
 
-        .logo-container {
+        .license-screen.hidden { display: none; }
+
+        .license-logo { font-size: 4em; margin-bottom: 20px; }
+
+        .license-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
             text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 0.8s ease-out;
         }
 
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
+        .license-subtitle {
+            color: #a0a0a0;
+            margin-bottom: 30px;
+            text-align: center;
         }
 
-        .logo-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-            margin: 0 auto 20px;
-            box-shadow: 0 10px 40px var(--primary-glow);
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 10px 40px var(--primary-glow); }
-            50% { box-shadow: 0 10px 60px var(--primary-glow), 0 0 100px var(--primary-glow); }
-        }
-
-        .logo-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 2.5rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 3px;
-        }
-
-        .login-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 40px 30px;
+        .license-input-box {
             width: 100%;
-            max-width: 400px;
-            backdrop-filter: blur(20px);
-            animation: fadeInUp 0.8s ease-out 0.2s both;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .input-group {
+            max-width: 350px;
             margin-bottom: 20px;
         }
 
-        .input-group label {
+        .license-input-box label {
             display: block;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-muted);
             margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: #a0a0a0;
         }
 
-        .input-group input {
+        .license-input {
             width: 100%;
-            padding: 16px 20px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: var(--text);
-            font-size: 16px;
-            font-family: 'Rajdhani', sans-serif;
-            transition: all 0.3s ease;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 20px var(--primary-glow);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Orbitron', monospace;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-size: 18px;
+            text-align: center;
             letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: var(--bg-dark);
+        .license-input:focus {
+            outline: none;
+            border-color: #7c3aed;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px var(--primary-glow);
+        .activate-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            max-width: 350px;
+            margin-bottom: 20px;
         }
 
-        .btn-primary:active {
-            transform: translateY(0);
+        .activate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        /* Main App */
-        .app-container {
-            display: none;
-            min-height: 100vh;
-            padding-bottom: 80px;
+        .license-status {
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 350px;
         }
 
-        .header {
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            padding: 15px 20px;
+        .license-status.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+
+        .license-status.success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #6ee7b7;
+        }
+
+        .license-status.expired {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid #f59e0b;
+            color: #fcd34d;
+        }
+
+        .contact-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .contact-box a { color: #7c3aed; text-decoration: none; }
+
+        .whatsapp-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #25d366;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* ============ MAIN APP ============ */
+        .app-container { display: none; }
+        .app-container.visible { display: block; }
+
+        .service-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 12px 20px;
+            padding-bottom: calc(12px + var(--safe-bottom));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .service-bar.inactive {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+        }
+
+        .service-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .pulse-dot {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+
+        .service-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 16px 20px;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .card-header.success {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+
+        .card-header.settings {
+            background: linear-gradient(135deg, #475569 0%, #64748b 100%);
+        }
+
+        .card-header .toggle-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s;
+        }
+
+        .card-content {
+            padding: 20px;
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .card-content.collapsed {
+            max-height: 0;
+            padding: 0 20px;
+        }
+
+        .connection-bar {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-weight: 500;
+            font-size: 0.85em;
+        }
+
+        .connection-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .license-info-bar {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(20px);
+            font-size: 0.85em;
         }
 
-        .header-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.3rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .server-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 15px;
-            background: var(--bg-input);
-            border-radius: 20px;
-            font-size: 0.85rem;
-        }
+        .license-info-bar .expires { color: #fcd34d; }
+        .license-info-bar .client-name { color: #a855f7; }
 
         .status-dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: var(--danger);
-            animation: blink 1s ease-in-out infinite;
+            background: #ef4444;
         }
 
-        .status-dot.online {
-            background: var(--success);
-            animation: none;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .content {
-            padding: 20px;
-        }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-family: 'Orbitron', monospace;
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Section Headers */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .section-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.1rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-title i {
-            color: var(--primary);
-        }
-
-        /* Add Alert Button */
-        .btn-add {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border: none;
-            color: var(--bg-dark);
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .btn-add:hover {
-            transform: scale(1.1);
-            box-shadow: 0 5px 20px var(--primary-glow);
-        }
-
-        /* Alert Cards */
-        .alerts-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-
-        .alert-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .alert-card.triggered {
-            border-color: var(--success);
-            background: rgba(0, 255, 136, 0.1);
-        }
-
-        .alert-info {
-            flex: 1;
-        }
-
-        .alert-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .alert-details {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .alert-details .condition {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 3px 10px;
-            background: var(--bg-input);
-            border-radius: 20px;
-            margin-left: 10px;
-        }
-
-        .condition.above { color: var(--success); }
-        .condition.below { color: var(--danger); }
-
-        .alert-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            background: var(--bg-input);
-            color: var(--text-muted);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .btn-icon:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .btn-icon.delete:hover {
-            border-color: var(--danger);
-            color: var(--danger);
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-
-        /* Config Section */
-        .config-section {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .config-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 15px;
-        }
-
-        .config-title {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .config-title i.fa-whatsapp { color: #25D366; }
-        .config-title i.fa-telegram { color: #0088cc; }
-
-        .toggle {
-            width: 50px;
-            height: 28px;
-            background: var(--bg-input);
-            border-radius: 14px;
-            position: relative;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .toggle.active {
-            background: var(--success);
-        }
-
-        .toggle::after {
-            content: '';
-            position: absolute;
-            width: 22px;
-            height: 22px;
-            background: white;
-            border-radius: 50%;
-            top: 3px;
-            left: 3px;
-            transition: transform 0.3s ease;
-        }
-
-        .toggle.active::after {
-            transform: translateX(22px);
-        }
-
-        .config-body {
-            display: none;
-        }
-
-        .config-body.visible {
-            display: block;
-        }
-
-        .config-row {
-            margin-bottom: 15px;
-        }
-
-        .config-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .config-row label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .config-row input {
-            width: 100%;
-            padding: 12px 15px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text);
-            font-size: 16px;
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        .config-row input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .btn-save-config {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border: none;
-            border-radius: 10px;
-            color: var(--bg-dark);
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        /* Bottom Nav */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--bg-card);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 20px;
-            backdrop-filter: blur(20px);
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .nav-item i {
-            font-size: 1.3rem;
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-        }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .modal-overlay.visible {
-            display: flex;
-        }
-
-        .modal {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 400px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalIn 0.3s ease-out;
-        }
-
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text-muted);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-body {
-            padding: 20px;
+        .status-dot.connected {
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .form-group label {
             display: block;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9em;
         }
 
-        .form-group input,
-        .form-group select {
+        select, input, textarea {
             width: 100%;
-            padding: 14px 16px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
+            padding: 14px;
+            border: 2px solid #e5e7eb;
             border-radius: 10px;
-            color: var(--text);
             font-size: 16px;
-            font-family: 'Rajdhani', sans-serif;
+            background: white;
+            font-family: inherit;
+            transition: border-color 0.2s;
         }
 
-        .form-group select {
-            cursor: pointer;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
+        select:focus, input:focus, textarea:focus {
             outline: none;
             border-color: var(--primary);
         }
 
-        .condition-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        textarea { resize: vertical; min-height: 70px; }
+
+        /* ============ WHATSAPP BOX ============ */
+        .whatsapp-box {
+            background: #ecfdf5;
+            border: 2px solid #10b981;
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .whatsapp-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .whatsapp-row input {
+            flex: 1;
+            padding: 12px;
+            min-width: 0;
+        }
+
+        /* ============ TELEGRAM BOX ============ */
+        .telegram-box {
+            background: #e0f2fe;
+            border: 2px solid #0088cc;
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .telegram-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .telegram-row input {
+            flex: 1;
+            padding: 12px;
+            min-width: 0;
+        }
+
+        /* ============ LANGUAGE SELECTOR ============ */
+        .language-box {
+            background: #f3f4f6;
+            border: 2px solid #d1d5db;
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .language-options {
+            display: flex;
             gap: 10px;
         }
 
-        .condition-btn {
-            padding: 14px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
+        .lang-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #d1d5db;
             border-radius: 10px;
-            color: var(--text);
+            background: white;
+            font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
         }
 
-        .condition-btn.selected {
+        .lang-btn.active {
             border-color: var(--primary);
-            background: var(--primary-glow);
+            background: #ede9fe;
+            color: var(--primary);
         }
 
-        .condition-btn.above.selected {
-            border-color: var(--success);
-            background: rgba(0, 255, 136, 0.2);
+        .lang-btn:hover {
+            border-color: var(--primary-light);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .btn:active { transform: scale(0.96); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            font-size: 1em;
+        }
+
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-telegram { background: var(--telegram); color: white; }
+
+        .btn-sm {
+            padding: 10px 14px;
+            font-size: 13px;
+        }
+
+        .setup-text {
+            font-size: 0.8em;
+            color: #059669;
+            line-height: 1.5;
+        }
+
+        .setup-text.telegram {
+            color: #0369a1;
+        }
+
+        /* ============ COMING SOON ============ */
+        .coming-soon-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px dashed #f59e0b;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .coming-soon-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .coming-soon-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #92400e;
+            margin-bottom: 8px;
+        }
+
+        .coming-soon-text {
+            color: #b45309;
+            font-size: 0.9em;
+        }
+
+        /* ============ SYMBOL SELECTION ============ */
+        .symbol-selectors {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .price-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            background: #f0fdf4;
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .current-price {
+            font-size: 1.3em;
+            font-weight: bold;
             color: var(--success);
         }
 
-        .condition-btn.below.selected {
-            border-color: var(--danger);
-            background: rgba(255, 51, 102, 0.2);
-            color: var(--danger);
+        /* ============ ALERTS ============ */
+        .alerts-list, .history-list {
+            max-height: 300px;
+            overflow-y: auto;
         }
 
-        /* Price Display */
-        .current-price {
-            text-align: center;
-            padding: 15px;
-            background: var(--bg-input);
+        .alert-item {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
             border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .price-label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-        }
-
-        .price-value {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        /* Pages */
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        /* Settings Page */
-        .settings-item {
+            padding: 12px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 12px;
+            gap: 10px;
         }
 
-        .settings-info {
+        .alert-item.history {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+
+        .alert-info { flex: 1; min-width: 0; }
+
+        .alert-symbol {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+            font-size: 0.95em;
+        }
+
+        .alert-meta {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.7em;
+            font-weight: 600;
+        }
+
+        .badge-up { background: #dcfce7; color: #166534; }
+        .badge-down { background: #fee2e2; color: #991b1b; }
+        .badge-price { background: #ede9fe; color: #6d28d9; }
+        .badge-time { background: #dbeafe; color: #1d4ed8; }
+        .badge-finnhub { background: #fef3c7; color: #b45309; }
+
+        .alert-note {
+            margin-top: 6px;
+            padding: 6px 10px;
+            background: #fef3c7;
+            border-left: 3px solid #f59e0b;
+            border-radius: 6px;
+            font-size: 0.8em;
+            color: #92400e;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+        }
+
+        .empty-icon { font-size: 2.5em; margin-bottom: 10px; }
+
+        /* ============ PRICES GRID ============ */
+        .prices-section-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 8px;
         }
 
-        .settings-info i {
-            font-size: 1.2rem;
+        .prices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .price-card {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .price-card:active {
+            border-color: var(--primary);
+            transform: scale(0.98);
+        }
+
+        .price-card.favorite {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .price-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .price-card-name {
+            font-size: 0.75em;
+            color: #6b7280;
+            margin-bottom: 4px;
+            line-height: 1.2;
+            flex: 1;
+        }
+
+        .price-card-value {
+            font-size: 1.1em;
+            font-weight: bold;
             color: var(--primary);
-            width: 25px;
         }
 
-        .settings-text {
-            font-weight: 500;
+        .favorite-btn {
+            background: none;
+            border: none;
+            font-size: 1em;
+            cursor: pointer;
+            padding: 2px;
+            opacity: 0.4;
+            transition: opacity 0.2s;
         }
 
-        .settings-sub {
-            font-size: 0.85rem;
-            color: var(--text-muted);
+        .favorite-btn.active {
+            opacity: 1;
         }
 
-        .odai-display {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.9rem;
-            color: var(--primary);
-            background: var(--bg-input);
-            padding: 8px 15px;
-            border-radius: 8px;
-        }
-
-        /* Toast */
-        .toast {
+        /* ============ NOTIFICATIONS ============ */
+        .notification {
             position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--bg-card);
-            border: 1px solid var(--success);
-            padding: 15px 25px;
+            top: calc(10px + var(--safe-top));
+            left: 10px;
+            right: 10px;
+            background: white;
             border-radius: 12px;
-            opacity: 0;
-            transition: all 0.3s ease;
+            padding: 14px 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideDown 0.3s ease;
+            border-left: 4px solid var(--success);
+        }
+
+        .notification.error { border-left-color: var(--danger); }
+        .notification.whatsapp { border-left-color: #25d366; }
+        .notification.telegram { border-left-color: #0088cc; }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .notif-title { font-weight: 600; color: #1f2937; }
+        .notif-text { font-size: 0.85em; color: #6b7280; margin-top: 2px; }
+
+        .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
             z-index: 2000;
         }
 
-        .toast.visible {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        .modal-box {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 360px;
+            width: 100%;
         }
 
-        .toast.error {
-            border-color: var(--danger);
-            color: var(--danger);
+        .modal-title { font-size: 1.1em; font-weight: 600; margin-bottom: 12px; }
+        .modal-text { color: #6b7280; margin-bottom: 20px; line-height: 1.5; }
+        .modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
+
+        .clear-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            cursor: pointer;
         }
 
-        /* Responsive */
-        @media (max-width: 360px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stat-value {
-                font-size: 1.5rem;
-            }
+        /* ============ CATEGORY TABS ============ */
+        .category-tabs {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
         }
+
+        .category-tab {
+            background: #e5e7eb;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .category-tab.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+        }
+
+        /* ============ FOOTER ============ */
+        .footer {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .footer-text {
+            color: #6b7280;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .footer-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .footer-author {
+            color: #7c3aed;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* ============ SCROLLBAR ============ */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #c4b5fd; border-radius: 3px; }
     </style>
 </head>
 <body>
-    <div class="bg-animation"></div>
-    <div class="grid-overlay"></div>
 
-    <!-- Login Screen -->
-    <div class="login-screen" id="loginScreen">
-        <div class="logo-container">
-            <div class="logo-icon">
-                <i class="fas fa-chart-line"></i>
-            </div>
-            <h1 class="logo-title">AlertesDeriv</h1>
+    <!-- ============ LICENSE SCREEN ============ -->
+    <div class="license-screen" id="licenseScreen">
+        <div class="license-logo">🔐</div>
+        <div class="license-title">Alertes Deriv Pro</div>
+        <div class="license-subtitle" data-i18n="licenseSubtitle">Système de trading professionnel</div>
+
+        <div class="license-input-box">
+            <label data-i18n="enterLicenseKey">Entrez votre clé de licence :</label>
+            <input type="text" class="license-input" id="licenseInput" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19">
         </div>
-        <div class="login-card">
-            <div class="input-group">
-                <label>Clé de Licence</label>
-                <input type="text" id="licenseInput" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" style="text-transform: uppercase; letter-spacing: 2px;">
+
+        <div class="license-status" id="licenseStatus" style="display:none;"></div>
+
+        <button class="activate-btn" id="activateBtn" onclick="activateLicense()">
+            <span data-i18n="activateLicense">✅ Activer la licence</span>
+        </button>
+
+        <div class="contact-box">
+            <div style="margin-bottom: 10px;" data-i18n="getLicense">📱 Pour obtenir une licence (25$) :</div>
+            <a href="https://wa.me/22899096690" class="whatsapp-link">
+                <span>💬</span> WhatsApp: +228 99 09 66 90
+            </a>
+            <div style="margin-top: 15px;">
+                <a href="https://linktr.ee/AllmarketsFx_journal" style="color: #a855f7;">
+                    🔗 linktr.ee/AllmarketsFx_journal
+                </a>
             </div>
-            <div id="licenseError" style="color: #ff3366; font-size: 0.9rem; margin-bottom: 15px; display: none;"></div>
-            <button class="btn btn-primary" onclick="login()" id="loginBtn">
-                <i class="fas fa-sign-in-alt"></i> Connexion
-            </button>
-            <div style="margin-top: 20px; font-size: 0.85rem; color: var(--text-muted); text-align: center;">
-                Pas de licence ? Contactez l'administrateur
+            <div style="margin-top: 20px; color: #7c3aed; font-weight: bold;">
+                CRÉÉ PAR GIOVANNI & ROLAND
             </div>
         </div>
     </div>
 
-    <!-- Main App -->
+    <!-- ============ MAIN APP ============ -->
     <div class="app-container" id="appContainer">
-        <header class="header">
-            <h1 class="header-title">AlertesDeriv</h1>
-            <div class="server-status">
-                <div class="status-dot" id="serverStatus"></div>
-                <span id="serverStatusText">Connexion...</span>
+
+        <!-- License Info Bar -->
+        <div class="license-info-bar">
+            <span class="client-name" id="clientNameInfo">👤 Client</span>
+            <span class="expires" id="expiresInfo">Expire: --</span>
+        </div>
+
+        <!-- Connection Status -->
+        <div class="connection-bar" style="margin-top: 10px;">
+            <div class="connection-item">
+                <span>Deriv</span>
+                <span class="status-dot" id="derivDot"></span>
             </div>
-        </header>
-
-        <div class="content">
-            <!-- Dashboard Page -->
-            <div class="page active" id="dashboardPage">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalAlerts">0</div>
-                        <div class="stat-label">Alertes</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="triggeredAlerts">0</div>
-                        <div class="stat-label">Déclenchées</div>
-                    </div>
-                </div>
-
-                <div class="section-header">
-                    <h2 class="section-title">
-                        <i class="fas fa-bell"></i>
-                        Mes Alertes
-                    </h2>
-                    <button class="btn-add" onclick="openAlertModal()">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-
-                <div class="alerts-list" id="alertsList">
-                    <div class="empty-state">
-                        <i class="fas fa-bell-slash"></i>
-                        <p>Aucune alerte configurée</p>
-                    </div>
-                </div>
-
-                <!-- WhatsApp Config -->
-                <div class="config-section">
-                    <div class="config-header">
-                        <div class="config-title">
-                            <i class="fab fa-whatsapp"></i>
-                            WhatsApp
-                        </div>
-                        <div class="toggle" id="whatsappToggle" onclick="toggleConfig('whatsapp')"></div>
-                    </div>
-                    <div class="config-body" id="whatsappConfig">
-                        <div class="config-row">
-                            <label>Numéro de téléphone (avec indicatif)</label>
-                            <input type="tel" id="whatsappPhone" placeholder="+33612345678">
-                        </div>
-                        <button class="btn-save-config" onclick="saveWhatsAppConfig()">
-                            Enregistrer
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Telegram Config -->
-                <div class="config-section">
-                    <div class="config-header">
-                        <div class="config-title">
-                            <i class="fab fa-telegram"></i>
-                            Telegram
-                        </div>
-                        <div class="toggle" id="telegramToggle" onclick="toggleConfig('telegram')"></div>
-                    </div>
-                    <div class="config-body" id="telegramConfig">
-                        <div class="config-row">
-                            <label>Bot Token</label>
-                            <input type="text" id="telegramToken" placeholder="123456:ABC-DEF...">
-                        </div>
-                        <div class="config-row">
-                            <label>Chat ID</label>
-                            <input type="text" id="telegramChatId" placeholder="123456789">
-                        </div>
-                        <button class="btn-save-config" onclick="saveTelegramConfig()">
-                            Enregistrer
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Settings Page -->
-            <div class="page" id="settingsPage">
-                <h2 class="section-title" style="margin-bottom: 20px;">
-                    <i class="fas fa-cog"></i>
-                    Paramètres
-                </h2>
-
-                <div class="settings-item">
-                    <div class="settings-info">
-                        <i class="fas fa-key"></i>
-                        <div>
-                            <div class="settings-text">Licence</div>
-                            <div class="settings-sub" id="licenseKeyDisplay">-</div>
-                        </div>
-                    </div>
-                    <div class="odai-display" id="licenseExpiry">-</div>
-                </div>
-
-                <div class="settings-item">
-                    <div class="settings-info">
-                        <i class="fas fa-user"></i>
-                        <div>
-                            <div class="settings-text">Client</div>
-                            <div class="settings-sub" id="clientNameDisplay">-</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="settings-item">
-                    <div class="settings-info">
-                        <i class="fas fa-server"></i>
-                        <div>
-                            <div class="settings-text">Serveur</div>
-                            <div class="settings-sub" id="serverUrl">-</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="settings-item" onclick="logout()" style="cursor: pointer;">
-                    <div class="settings-info">
-                        <i class="fas fa-sign-out-alt" style="color: var(--danger);"></i>
-                        <div>
-                            <div class="settings-text" style="color: var(--danger);">Déconnexion</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="connection-item">
+                <span>Finnhub</span>
+                <span class="status-dot" id="finnhubDot"></span>
             </div>
         </div>
 
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <div class="nav-item active" onclick="showPage('dashboard')">
-                <i class="fas fa-home"></i>
-                <span>Accueil</span>
-            </div>
-            <div class="nav-item" onclick="showPage('settings')">
-                <i class="fas fa-cog"></i>
-                <span>Réglages</span>
-            </div>
-        </nav>
-    </div>
+        <div class="container" style="margin-top: 15px;">
 
-    <!-- Add Alert Modal -->
-    <div class="modal-overlay" id="alertModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Nouvelle Alerte</h3>
-                <button class="modal-close" onclick="closeAlertModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Nom de l'alerte</label>
-                    <input type="text" id="alertName" placeholder="Ex: Bitcoin 100k">
+            <!-- ============ SETTINGS ============ -->
+            <div class="card">
+                <div class="card-header settings" id="settingsHeader" onclick="toggleCard('settingsContent', 'settingsHeader')">
+                    <span data-i18n="settings">⚙️ Paramètres</span>
+                    <span class="toggle-icon">▼</span>
                 </div>
+                <div class="card-content collapsed" id="settingsContent">
 
-                <div class="form-group">
-                    <label>Symbole</label>
-                    <select id="alertSymbol" onchange="updateCurrentPrice()">
-                        <option value="">Sélectionner...</option>
-                        <optgroup label="Crypto">
-                            <option value="cryBTCUSD">Bitcoin (BTC/USD)</option>
-                            <option value="cryETHUSD">Ethereum (ETH/USD)</option>
-                            <option value="cryLTCUSD">Litecoin (LTC/USD)</option>
-                            <option value="cryBNBUSD">BNB (BNB/USD)</option>
-                        </optgroup>
-                        <optgroup label="Forex">
-                            <option value="frxEURUSD">EUR/USD</option>
-                            <option value="frxGBPUSD">GBP/USD</option>
-                            <option value="frxUSDJPY">USD/JPY</option>
-                            <option value="frxAUDUSD">AUD/USD</option>
-                        </optgroup>
-                        <optgroup label="Indices">
-                            <option value="R_100">Volatility 100</option>
-                            <option value="R_75">Volatility 75</option>
-                            <option value="R_50">Volatility 50</option>
-                            <option value="R_25">Volatility 25</option>
-                            <option value="R_10">Volatility 10</option>
-                        </optgroup>
-                    </select>
-                </div>
+                    <!-- Language Selector -->
+                    <div class="form-group">
+                        <label data-i18n="language">🌐 Langue</label>
+                        <div class="language-box">
+                            <div class="language-options">
+                                <button class="lang-btn" id="langFr" onclick="setLanguage('fr')">
+                                    🇫🇷 Français
+                                </button>
+                                <button class="lang-btn" id="langEn" onclick="setLanguage('en')">
+                                    🇬🇧 English
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="current-price" id="currentPriceDisplay" style="display: none;">
-                    <div class="price-label">Prix actuel</div>
-                    <div class="price-value" id="currentPriceValue">-</div>
-                </div>
+                    <!-- WhatsApp Config -->
+                    <div class="form-group">
+                        <label data-i18n="whatsappOption">📱 WhatsApp (Option 1)</label>
+                        <div class="whatsapp-box">
+                            <div class="whatsapp-row">
+                                <input type="tel" id="whatsappPhone" placeholder="+22812345678">
+                                <input type="text" id="whatsappApiKey" placeholder="API Key">
+                                <button class="btn btn-success" onclick="testWhatsApp()" data-i18n="test">Test</button>
+                            </div>
+                            <div class="setup-text" data-i18n="whatsappSetup">
+                                1. Envoyez "I allow callmebot..." au +34 623 78 95 95<br>
+                                2. Copiez le code API reçu
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    <label>Prix cible</label>
-                    <input type="number" id="alertPrice" placeholder="0.00" step="any">
-                </div>
-
-                <div class="form-group">
-                    <label>Condition</label>
-                    <div class="condition-buttons">
-                        <button class="condition-btn above" onclick="selectCondition('above')">
-                            <i class="fas fa-arrow-up"></i> Au-dessus
-                        </button>
-                        <button class="condition-btn below" onclick="selectCondition('below')">
-                            <i class="fas fa-arrow-down"></i> En-dessous
-                        </button>
+                    <!-- Telegram Config -->
+                    <div class="form-group">
+                        <label data-i18n="telegramOption">✈️ Telegram (Option 2)</label>
+                        <div class="telegram-box">
+                            <div class="telegram-row">
+                                <input type="text" id="telegramBotToken" placeholder="Bot Token">
+                                <input type="text" id="telegramChatId" placeholder="Chat ID">
+                                <button class="btn btn-telegram" onclick="testTelegram()" data-i18n="test">Test</button>
+                            </div>
+                            <div class="setup-text telegram" data-i18n="telegramSetup">
+                                1. Créez un bot via @BotFather sur Telegram<br>
+                                2. Obtenez votre Chat ID via @userinfobot<br>
+                                3. Démarrez une conversation avec votre bot
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <button class="btn btn-primary" onclick="createAlert()">
-                    <i class="fas fa-plus"></i> Créer l'alerte
-                </button>
             </div>
+
+            <!-- ============ CREATE ALERT ============ -->
+            <div class="card">
+                <div class="card-header"><span data-i18n="newAlert">➕ Nouvelle Alerte</span></div>
+                <div class="card-content">
+
+                    <div class="symbol-selectors">
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <label data-i18n="market">📊 Marché</label>
+                            <select id="marketSelect" onchange="updateCategories()">
+                                <option value="" data-i18n="chooseMarket">Choisir un marché...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <label data-i18n="category">📁 Catégorie</label>
+                            <select id="categorySelect" onchange="updateSymbols()">
+                                <option value="" data-i18n="chooseCategory">Choisir une catégorie...</option>
+                            </select>
+                        </div>
+
+                        <!-- Coming Soon Message -->
+                        <div id="comingSoonBox" class="coming-soon-box" style="display: none;">
+                            <div class="coming-soon-icon">🚧</div>
+                            <div class="coming-soon-title" data-i18n="comingSoon">Disponible bientôt</div>
+                            <div class="coming-soon-text" data-i18n="comingSoonText">Les indices synthétiques Weltrade seront ajoutés prochainement.</div>
+                        </div>
+
+                        <div class="form-group" id="symbolGroup">
+                            <label data-i18n="symbol">💹 Symbole</label>
+                            <select id="symbolSelect" onchange="updateCurrentPrice()">
+                                <option value="" data-i18n="chooseSymbol">Choisir un symbole...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="price-display" id="priceDisplayBox">
+                        <span data-i18n="currentPrice">Prix actuel:</span>
+                        <span class="current-price" id="currentPrice">--</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="condition">Condition</label>
+                        <select id="crossType">
+                            <option value="above" data-i18n="above">📈 Au-dessus de</option>
+                            <option value="below" data-i18n="below">📉 En-dessous de</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="thresholdPrice">Prix seuil</label>
+                        <input type="number" id="thresholdValue" placeholder="Ex: 150.50" step="0.00001">
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="trigger">Déclenchement</label>
+                        <select id="triggerType">
+                            <option value="once" data-i18n="once">Une seule fois</option>
+                            <option value="repeat" data-i18n="repeat">À chaque fois</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="noteOptional">📝 Note (optionnel)</label>
+                        <textarea id="alertNote" placeholder="Ex: Take profit, Stop loss..."></textarea>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="createAlert()"><span data-i18n="createAlert">➕ Créer l'alerte</span></button>
+                </div>
+            </div>
+
+            <!-- ============ ACTIVE ALERTS ============ -->
+            <div class="card">
+                <div class="card-header">
+                    <span data-i18n="activeAlerts">🔔 Alertes Actives</span>
+                    <span id="alertCount">0</span>
+                </div>
+                <div class="card-content">
+                    <div class="alerts-list" id="alertsList"></div>
+                </div>
+            </div>
+
+            <!-- ============ HISTORY ============ -->
+            <div class="card">
+                <div class="card-header success">
+                    <span data-i18n="history">📅 Historique</span>
+                    <button class="clear-btn" onclick="clearHistory()" id="clearBtn" style="display:none" data-i18n="clear">🧹 Vider</button>
+                </div>
+                <div class="card-content">
+                    <div class="history-list" id="historyList"></div>
+                </div>
+            </div>
+
+            <!-- ============ PRICES GRID ============ -->
+            <div class="card">
+                <div class="card-header" id="pricesHeader" onclick="toggleCard('pricesContent', 'pricesHeader')">
+                    <span data-i18n="realTimePrices">📊 Prix Temps Réel</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="card-content collapsed" id="pricesContent">
+                    <!-- Favorites Section -->
+                    <div id="favoritesSection" style="display: none;">
+                        <div class="prices-section-title" data-i18n="favorites">⭐ Favoris</div>
+                        <div class="prices-grid" id="favoritesGrid"></div>
+                    </div>
+
+                    <!-- Category Tabs -->
+                    <div class="category-tabs" id="priceCategoryTabs"></div>
+
+                    <!-- Category Prices -->
+                    <div class="prices-grid" id="pricesGrid"></div>
+                </div>
+            </div>
+
+            <!-- ============ FOOTER ============ -->
+            <div class="footer">
+                <div class="footer-text" data-i18n="footerText">
+                    📔 Pour avoir des journaux de trading<br>
+                    (FOREX / DERIV / WELTRADE)
+                </div>
+                <a href="https://linktr.ee/AllmarketsFx_journal" class="footer-link" target="_blank">
+                    👉 <span data-i18n="clickHere">Cliquez ici</span>
+                </a>
+                <div class="footer-author">CRÉÉ PAR GIOVANNI & ROLAND</div>
+            </div>
+
+        </div>
+
+        <!-- Background Service Bar -->
+        <div class="service-bar" id="serviceBar">
+            <div class="service-status">
+                <div class="pulse-dot"></div>
+                <span id="serviceText" data-i18n="serviceActive">Service actif 24/7</span>
+            </div>
+            <button class="service-btn" id="serviceBtn" onclick="toggleService()" data-i18n="active">Actif ✓</button>
         </div>
     </div>
-
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
 
     <script>
-        // Configuration
-        const SERVER_URL = 'https://alertes-deriv-server.onrender.com';
+        // =============================================
+        // TRANSLATIONS
+        // =============================================
+
+        const translations = {
+            fr: {
+                licenseSubtitle: "Système de trading professionnel",
+                enterLicenseKey: "Entrez votre clé de licence :",
+                activateLicense: "✅ Activer la licence",
+                getLicense: "📱 Pour obtenir une licence (25$) :",
+                licenseActive: "🔑 Licence active",
+                expires: "Expire:",
+                licenseInvalid: "❌ Licence invalide ou non trouvée",
+                licenseExpired: "⚠️ Licence expirée le",
+                licenseDisabled: "❌ Licence désactivée",
+                connectionError: "❌ Erreur de connexion. Vérifiez votre internet.",
+                verifying: "⏳ Vérification...",
+                settings: "⚙️ Paramètres",
+                language: "🌐 Langue",
+                whatsappOption: "📱 WhatsApp (Option 1)",
+                telegramOption: "✈️ Telegram (Option 2)",
+                test: "Test",
+                whatsappSetup: "1. Envoyez \"I allow callmebot...\" au +34 623 78 95 95<br>2. Copiez le code API reçu",
+                telegramSetup: "1. Créez un bot via @BotFather sur Telegram<br>2. Obtenez votre Chat ID via @userinfobot<br>3. Démarrez une conversation avec votre bot",
+                newAlert: "➕ Nouvelle Alerte",
+                market: "📊 Marché",
+                chooseMarket: "Choisir un marché...",
+                category: "📁 Catégorie",
+                chooseCategory: "Choisir une catégorie...",
+                symbol: "💹 Symbole",
+                chooseSymbol: "Choisir un symbole...",
+                currentPrice: "Prix actuel:",
+                condition: "Condition",
+                above: "📈 Au-dessus de",
+                below: "📉 En-dessous de",
+                thresholdPrice: "Prix seuil",
+                trigger: "Déclenchement",
+                once: "Une seule fois",
+                repeat: "À chaque fois",
+                noteOptional: "📝 Note (optionnel)",
+                createAlert: "➕ Créer l'alerte",
+                activeAlerts: "🔔 Alertes Actives",
+                history: "📅 Historique",
+                clear: "🧹 Vider",
+                noActiveAlerts: "Aucune alerte active",
+                noHistory: "Aucun historique",
+                realTimePrices: "📊 Prix Temps Réel",
+                favorites: "⭐ Favoris",
+                comingSoon: "Disponible bientôt",
+                comingSoonText: "Les indices synthétiques Weltrade seront ajoutés prochainement.",
+                serviceActive: "Service actif 24/7",
+                serviceStopped: "Service arrêté",
+                active: "Actif ✓",
+                start: "Démarrer",
+                footerText: "📔 Pour avoir des journaux de trading<br>(FOREX / DERIV / WELTRADE)",
+                clickHere: "Cliquez ici",
+                testSuccess: "✅ Test réussi!",
+                testFailed: "❌ Échec",
+                whatsappSent: "Message WhatsApp envoyé",
+                telegramSent: "Message Telegram envoyé",
+                checkConfig: "Vérifiez la configuration",
+                checkBotToken: "Vérifiez le Bot Token et Chat ID",
+                fillPhoneApi: "Remplissez le numéro et le code API",
+                fillBotChatId: "Remplissez le Bot Token et le Chat ID",
+                selectSymbol: "Sélectionnez un symbole",
+                invalidPrice: "Prix invalide",
+                configureNotif: "Configurez WhatsApp ou Telegram d'abord",
+                alertCreated: "✅ Alerte créée!",
+                alertTriggered: "🔔 Alerte!",
+                stopService: "⏹️ Arrêter le service?",
+                stopServiceText: "Vous ne recevrez plus d'alertes en arrière-plan.",
+                cancel: "Annuler",
+                confirm: "Confirmer",
+                clearHistory: "🧹 Vider l'historique?",
+                clearHistoryText: "Cette action est irréversible.",
+                historyCleared: "Historique vidé",
+                weltradeNotAvailable: "WELTRADE n'est pas encore disponible",
+                aboveOf: "au-dessus de",
+                belowOf: "en-dessous de",
+                ABOVE: "AU-DESSUS",
+                BELOW: "EN-DESSOUS"
+            },
+            en: {
+                licenseSubtitle: "Professional trading system",
+                enterLicenseKey: "Enter your license key:",
+                activateLicense: "✅ Activate license",
+                getLicense: "📱 To get a license ($25):",
+                licenseActive: "🔑 License active",
+                expires: "Expires:",
+                licenseInvalid: "❌ Invalid or not found license",
+                licenseExpired: "⚠️ License expired on",
+                licenseDisabled: "❌ License disabled",
+                connectionError: "❌ Connection error. Check your internet.",
+                verifying: "⏳ Verifying...",
+                settings: "⚙️ Settings",
+                language: "🌐 Language",
+                whatsappOption: "📱 WhatsApp (Option 1)",
+                telegramOption: "✈️ Telegram (Option 2)",
+                test: "Test",
+                whatsappSetup: "1. Send \"I allow callmebot...\" to +34 623 78 95 95<br>2. Copy the API code received",
+                telegramSetup: "1. Create a bot via @BotFather on Telegram<br>2. Get your Chat ID via @userinfobot<br>3. Start a conversation with your bot",
+                newAlert: "➕ New Alert",
+                market: "📊 Market",
+                chooseMarket: "Choose a market...",
+                category: "📁 Category",
+                chooseCategory: "Choose a category...",
+                symbol: "💹 Symbol",
+                chooseSymbol: "Choose a symbol...",
+                currentPrice: "Current price:",
+                condition: "Condition",
+                above: "📈 Above",
+                below: "📉 Below",
+                thresholdPrice: "Threshold price",
+                trigger: "Trigger",
+                once: "Once only",
+                repeat: "Every time",
+                noteOptional: "📝 Note (optional)",
+                createAlert: "➕ Create alert",
+                activeAlerts: "🔔 Active Alerts",
+                history: "📅 History",
+                clear: "🧹 Clear",
+                noActiveAlerts: "No active alerts",
+                noHistory: "No history",
+                realTimePrices: "📊 Real-Time Prices",
+                favorites: "⭐ Favorites",
+                comingSoon: "Coming soon",
+                comingSoonText: "Weltrade synthetic indices will be added soon.",
+                serviceActive: "Service active 24/7",
+                serviceStopped: "Service stopped",
+                active: "Active ✓",
+                start: "Start",
+                footerText: "📔 To get trading journals<br>(FOREX / DERIV / WELTRADE)",
+                clickHere: "Click here",
+                testSuccess: "✅ Test successful!",
+                testFailed: "❌ Failed",
+                whatsappSent: "WhatsApp message sent",
+                telegramSent: "Telegram message sent",
+                checkConfig: "Check the configuration",
+                checkBotToken: "Check the Bot Token and Chat ID",
+                fillPhoneApi: "Fill in the phone number and API key",
+                fillBotChatId: "Fill in the Bot Token and Chat ID",
+                selectSymbol: "Select a symbol",
+                invalidPrice: "Invalid price",
+                configureNotif: "Configure WhatsApp or Telegram first",
+                alertCreated: "✅ Alert created!",
+                alertTriggered: "🔔 Alert!",
+                stopService: "⏹️ Stop service?",
+                stopServiceText: "You will no longer receive alerts in the background.",
+                cancel: "Cancel",
+                confirm: "Confirm",
+                clearHistory: "🧹 Clear history?",
+                clearHistoryText: "This action is irreversible.",
+                historyCleared: "History cleared",
+                weltradeNotAvailable: "WELTRADE is not yet available",
+                aboveOf: "above",
+                belowOf: "below",
+                ABOVE: "ABOVE",
+                BELOW: "BELOW"
+            }
+        };
+
+        let currentLang = 'fr';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            try { localStorage.setItem('appLanguage', lang); } catch(e) {}
+
+            document.getElementById('langFr').classList.toggle('active', lang === 'fr');
+            document.getElementById('langEn').classList.toggle('active', lang === 'en');
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+
+            updateSelectOptions();
+            renderAlerts();
+            renderHistory();
+            renderPricesGrid();
+            updateServiceUI(serviceRunning);
+        }
+
+        function t(key) {
+            return translations[currentLang][key] || translations['fr'][key] || key;
+        }
+
+        function updateSelectOptions() {
+            const marketSelect = document.getElementById('marketSelect');
+            if (marketSelect.options[0]) marketSelect.options[0].textContent = t('chooseMarket');
+
+            const categorySelect = document.getElementById('categorySelect');
+            if (categorySelect.options[0]) categorySelect.options[0].textContent = t('chooseCategory');
+
+            const symbolSelect = document.getElementById('symbolSelect');
+            if (symbolSelect.options[0]) symbolSelect.options[0].textContent = t('chooseSymbol');
+
+            const crossType = document.getElementById('crossType');
+            if (crossType.options[0]) crossType.options[0].textContent = t('above');
+            if (crossType.options[1]) crossType.options[1].textContent = t('below');
+
+            const triggerType = document.getElementById('triggerType');
+            if (triggerType.options[0]) triggerType.options[0].textContent = t('once');
+            if (triggerType.options[1]) triggerType.options[1].textContent = t('repeat');
+        }
+
+        function loadLanguage() {
+            try {
+                const savedLang = localStorage.getItem('appLanguage') || 'fr';
+                setLanguage(savedLang);
+            } catch(e) {
+                setLanguage('fr');
+            }
+        }
+
+        // =============================================
+        // CONFIGURATION & API KEYS
+        // =============================================
+
         const FIREBASE_URL = 'https://alertes-deriv-licenses-default-rtdb.europe-west1.firebasedatabase.app';
+        const DERIV_APP_ID = '1089';
+        const FINNHUB_API_KEY = 'd5cc5opr01qsbmgjs7r0d5cc5opr01qsbmgjs7rg';
 
-        // State
-        let currentLicenseKey = null;
-        let currentLicenseData = null;
-        let alerts = [];
-        let selectedCondition = null;
-        let derivWs = null;
-        let prices = {};
+        // =============================================
+        // SYMBOLS DATABASE
+        // =============================================
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            checkStoredLicense();
-            setupLicenseInput();
+        const MARKETS = {
+            'deriv-synthetic': {
+                name: 'DERIV - Synthétiques',
+                source: 'deriv',
+                categories: {
+                    'volatility': { name: 'Volatility', symbols: { 'R_10': 'Volatility 10', 'R_25': 'Volatility 25', 'R_50': 'Volatility 50', 'R_75': 'Volatility 75', 'R_100': 'Volatility 100' } },
+                    'volatility-1s': { name: 'Volatility 1s', symbols: { '1HZ10V': 'Vol 10 (1s)', '1HZ25V': 'Vol 25 (1s)', '1HZ50V': 'Vol 50 (1s)', '1HZ75V': 'Vol 75 (1s)', '1HZ100V': 'Vol 100 (1s)' } },
+                    'boom': { name: 'Boom', symbols: { 'BOOM300N': 'Boom 300', 'BOOM500': 'Boom 500', 'BOOM600': 'Boom 600', 'BOOM900': 'Boom 900', 'BOOM1000': 'Boom 1000' } },
+                    'crash': { name: 'Crash', symbols: { 'CRASH300N': 'Crash 300', 'CRASH500': 'Crash 500', 'CRASH600': 'Crash 600', 'CRASH900': 'Crash 900', 'CRASH1000': 'Crash 1000' } },
+                    'jump': { name: 'Jump', symbols: { 'JD10': 'Jump 10', 'JD25': 'Jump 25', 'JD50': 'Jump 50', 'JD75': 'Jump 75', 'JD100': 'Jump 100' } },
+                    'step': { name: 'Step', symbols: { 'stpRNG': 'Step Index' } },
+                    'range-break': { name: 'Range Break', symbols: { 'RDBEAR': 'Range Break 100', 'RDBULL': 'Range Break 200' } }
+                }
+            },
+            'weltrade-synthetic': { name: 'WELTRADE - Synthétiques', source: 'weltrade', comingSoon: true, categories: { 'weltrade-all': { name: 'Tous les indices', symbols: {} } } },
+            'forex': {
+                name: 'FOREX',
+                source: 'finnhub',
+                categories: {
+                    'majors': { name: 'Majeures', symbols: { 'OANDA:EUR_USD': 'EUR/USD', 'OANDA:GBP_USD': 'GBP/USD', 'OANDA:USD_JPY': 'USD/JPY', 'OANDA:USD_CHF': 'USD/CHF', 'OANDA:AUD_USD': 'AUD/USD', 'OANDA:USD_CAD': 'USD/CAD', 'OANDA:NZD_USD': 'NZD/USD' } },
+                    'crosses': { name: 'Croisées', symbols: { 'OANDA:EUR_GBP': 'EUR/GBP', 'OANDA:EUR_JPY': 'EUR/JPY', 'OANDA:GBP_JPY': 'GBP/JPY', 'OANDA:AUD_JPY': 'AUD/JPY', 'OANDA:EUR_AUD': 'EUR/AUD', 'OANDA:GBP_AUD': 'GBP/AUD', 'OANDA:EUR_CAD': 'EUR/CAD', 'OANDA:GBP_CAD': 'GBP/CAD', 'OANDA:AUD_CAD': 'AUD/CAD', 'OANDA:CHF_JPY': 'CHF/JPY', 'OANDA:EUR_CHF': 'EUR/CHF', 'OANDA:GBP_CHF': 'GBP/CHF' } }
+                }
+            },
+            'indices': {
+                name: 'INDICES',
+                source: 'finnhub',
+                categories: {
+                    'us-indices': { name: 'US Indices', symbols: { 'OANDA:NAS100_USD': 'US100 (NASDAQ)', 'OANDA:US30_USD': 'US30 (DOW)', 'OANDA:SPX500_USD': 'US500 (S&P 500)', 'FOREXCOM:DXY': 'DXY (Dollar Index)' } },
+                    'eu-indices': { name: 'Europe Indices', symbols: { 'OANDA:UK100_GBP': 'UK100 (FTSE)', 'OANDA:DE30_EUR': 'DE40 (DAX)', 'OANDA:FR40_EUR': 'FR40 (CAC 40)', 'OANDA:EU50_EUR': 'EU50 (Euro Stoxx)' } },
+                    'asia-indices': { name: 'Asie Indices', symbols: { 'OANDA:JP225_USD': 'JP225 (Nikkei)', 'OANDA:AU200_AUD': 'AU200 (ASX 200)', 'OANDA:HK33_HKD': 'HK50 (Hang Seng)' } }
+                }
+            },
+            'commodities': {
+                name: 'MATIÈRES PREMIÈRES',
+                source: 'finnhub',
+                categories: {
+                    'metals': { name: 'Métaux', symbols: { 'OANDA:XAU_USD': 'XAU/USD (Gold)', 'OANDA:XAG_USD': 'XAG/USD (Silver)' } },
+                    'energy': { name: 'Énergie', symbols: { 'OANDA:WTICO_USD': 'WTI Oil', 'OANDA:BCO_USD': 'Brent Oil', 'OANDA:NATGAS_USD': 'Natural Gas' } }
+                }
+            },
+            'crypto': { name: 'CRYPTO', source: 'finnhub', categories: { 'crypto': { name: 'Cryptomonnaies', symbols: { 'BINANCE:BTCUSDT': 'Bitcoin/USD', 'BINANCE:ETHUSDT': 'Ethereum/USD' } } } }
+        };
+
+        const ALL_SYMBOLS = {};
+        const DERIV_SYMBOLS = {};
+        const FINNHUB_SYMBOL_LIST = [];
+
+        Object.entries(MARKETS).forEach(([marketKey, market]) => {
+            if (market.comingSoon) return;
+            Object.values(market.categories).forEach(category => {
+                Object.entries(category.symbols).forEach(([sym, name]) => {
+                    ALL_SYMBOLS[sym] = name;
+                    if (market.source === 'deriv') DERIV_SYMBOLS[sym] = name;
+                    else if (market.source === 'finnhub' && !FINNHUB_SYMBOL_LIST.includes(sym)) FINNHUB_SYMBOL_LIST.push(sym);
+                });
+            });
         });
 
-        // Auto-format license key input (XXXX-XXXX-XXXX-XXXX)
+        // =============================================
+        // STATE
+        // =============================================
+
+        let licenseData = null;
+        let currentLicenseKey = null;
+        let derivWs = null;
+        let finnhubWs = null;
+        let prices = {};
+        let alerts = [];
+        let alertHistory = [];
+        let favorites = [];
+        let whatsappConfig = {};
+        let telegramConfig = {};
+        let lastNotificationTime = {};
+        let derivReconnectAttempts = 0;
+        let finnhubReconnectAttempts = 0;
+        let serviceRunning = true;
+        let wakeLock = null;
+        let currentPriceCategory = 'deriv-synthetic:volatility';
+        let derivSubscribed = new Set();
+        let finnhubSubscribed = new Set();
+        let isWeltradeSelected = false;
+
+        // =============================================
+        // LICENSE - AUTO FORMAT INPUT
+        // =============================================
+
         function setupLicenseInput() {
             const input = document.getElementById('licenseInput');
             input.addEventListener('input', (e) => {
@@ -1104,377 +1360,808 @@
             });
 
             input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') login();
+                if (e.key === 'Enter') activateLicense();
             });
         }
 
-        function checkStoredLicense() {
-            const hash = window.location.hash;
-            if (hash && hash.startsWith('#license=')) {
-                const licenseKey = hash.substring(9);
-                if (licenseKey) {
-                    verifyLicense(licenseKey);
+        // =============================================
+        // LICENSE VERIFICATION (NO DEVICE ID)
+        // =============================================
+
+        async function checkLicense() {
+            try {
+                const storedLicense = localStorage.getItem('licenseKey');
+                if (storedLicense) {
+                    document.getElementById('licenseInput').value = storedLicense;
+                    const isValid = await verifyLicense(storedLicense, true);
+                    if (isValid) return;
                 }
-            }
+            } catch(e) {}
+
+            document.getElementById('licenseScreen').classList.remove('hidden');
         }
 
-        async function login() {
-            const licenseKey = document.getElementById('licenseInput').value.trim().toUpperCase();
-            const errorDiv = document.getElementById('licenseError');
-            const loginBtn = document.getElementById('loginBtn');
-
-            errorDiv.style.display = 'none';
-
-            if (!licenseKey || licenseKey.length < 19) {
-                errorDiv.textContent = 'Veuillez entrer une clé de licence valide';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Vérification...';
-            loginBtn.disabled = true;
-
-            await verifyLicense(licenseKey);
-
-            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Connexion';
-            loginBtn.disabled = false;
-        }
-
-        async function verifyLicense(licenseKey) {
-            const errorDiv = document.getElementById('licenseError');
-
+        async function verifyLicense(licenseKey, silent = false) {
             try {
                 const response = await fetch(`${FIREBASE_URL}/licenses/${licenseKey}.json`);
                 const data = await response.json();
 
                 if (!data) {
-                    errorDiv.textContent = '❌ Licence non trouvée';
-                    errorDiv.style.display = 'block';
-                    return;
+                    if (!silent) showLicenseStatus(t('licenseInvalid'), 'error');
+                    return false;
                 }
 
-                // Check if license is active
+                // Check if active
                 if (!data.active) {
-                    errorDiv.textContent = '❌ Licence désactivée';
-                    errorDiv.style.display = 'block';
-                    return;
+                    if (!silent) showLicenseStatus(t('licenseDisabled'), 'error');
+                    return false;
                 }
 
-                // Check expiration date
+                // Check expiration
                 const expiresAt = new Date(data.expiresAt);
                 const now = new Date();
 
-                if (expiresAt < now) {
-                    const expiredDate = expiresAt.toLocaleDateString('fr-FR');
-                    errorDiv.textContent = `❌ Licence expirée le ${expiredDate}`;
-                    errorDiv.style.display = 'block';
-                    return;
+                if (now > expiresAt) {
+                    showLicenseStatus(`${t('licenseExpired')} ${expiresAt.toLocaleDateString(currentLang === 'fr' ? 'fr-FR' : 'en-US')}`, 'expired');
+                    return false;
                 }
 
-                // License is valid!
+                // SUCCESS!
+                licenseData = data;
                 currentLicenseKey = licenseKey;
-                currentLicenseData = data;
-                window.location.hash = `license=${licenseKey}`;
-                showApp();
+                try { localStorage.setItem('licenseKey', licenseKey); } catch(e) {}
+
+                document.getElementById('licenseScreen').classList.add('hidden');
+                document.getElementById('appContainer').classList.add('visible');
+                document.getElementById('expiresInfo').textContent = `${t('expires')} ${expiresAt.toLocaleDateString(currentLang === 'fr' ? 'fr-FR' : 'en-US')}`;
+                document.getElementById('clientNameInfo').textContent = `👤 ${data.clientName || 'Client'}`;
+
+                initApp();
+                return true;
 
             } catch (error) {
                 console.error('License check error:', error);
-                errorDiv.textContent = '❌ Erreur de connexion au serveur';
-                errorDiv.style.display = 'block';
+                if (!silent) showLicenseStatus(t('connectionError'), 'error');
+                return false;
             }
         }
 
-        function showApp() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('appContainer').style.display = 'block';
+        async function activateLicense() {
+            const licenseKey = document.getElementById('licenseInput').value.trim().toUpperCase();
 
-            // Display license info
-            document.getElementById('licenseKeyDisplay').textContent = currentLicenseKey;
-            document.getElementById('serverUrl').textContent = SERVER_URL;
-
-            if (currentLicenseData) {
-                const expiresAt = new Date(currentLicenseData.expiresAt);
-                const daysLeft = Math.ceil((expiresAt - new Date()) / (1000 * 60 * 60 * 24));
-                document.getElementById('licenseExpiry').textContent = `${daysLeft}j restants`;
-                document.getElementById('licenseExpiry').style.color = daysLeft < 7 ? '#ff3366' : '#00ff88';
-                document.getElementById('clientNameDisplay').textContent = currentLicenseData.clientName || 'Client';
+            if (!licenseKey || licenseKey.length < 19) {
+                showLicenseStatus(t('licenseInvalid'), 'error');
+                return;
             }
 
-            connectDeriv();
-            checkServerStatus();
-            loadAlerts();
+            const btn = document.getElementById('activateBtn');
+            btn.disabled = true;
+            btn.textContent = t('verifying');
 
-            setInterval(checkServerStatus, 30000);
+            await verifyLicense(licenseKey);
+
+            btn.disabled = false;
+            btn.innerHTML = `<span data-i18n="activateLicense">${t('activateLicense')}</span>`;
         }
 
-        function logout() {
-            currentLicenseKey = null;
-            currentLicenseData = null;
-            window.location.hash = '';
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('appContainer').style.display = 'none';
-            document.getElementById('licenseInput').value = '';
-            document.getElementById('licenseError').style.display = 'none';
-            if (derivWs) {
-                derivWs.close();
+        function showLicenseStatus(message, type) {
+            const el = document.getElementById('licenseStatus');
+            el.textContent = message;
+            el.className = `license-status ${type}`;
+            el.style.display = 'block';
+        }
+
+        // =============================================
+        // CARD TOGGLE
+        // =============================================
+
+        function toggleCard(contentId, headerId) {
+            const content = document.getElementById(contentId);
+            const header = document.getElementById(headerId);
+            const icon = header.querySelector('.toggle-icon');
+
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                if (icon) icon.textContent = '▲';
+            } else {
+                content.classList.add('collapsed');
+                if (icon) icon.textContent = '▼';
             }
         }
 
-        // Deriv WebSocket for live prices
-        function connectDeriv() {
-            derivWs = new WebSocket('wss://ws.binaryws.com/websockets/v3?app_id=1089');
+        // =============================================
+        // WHATSAPP
+        // =============================================
 
-            derivWs.onopen = () => {
-                console.log('Deriv connected');
-            };
-
-            derivWs.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
-                    if (data.tick) {
-                        prices[data.tick.symbol] = data.tick.quote;
-                        updatePriceDisplay(data.tick.symbol);
-                    }
-                } catch (e) {}
-            };
-
-            derivWs.onclose = () => {
-                setTimeout(connectDeriv, 5000);
-            };
+        async function sendWhatsAppAlert(message) {
+            if (!whatsappConfig.phone || !whatsappConfig.apiKey) return false;
+            try {
+                const phone = whatsappConfig.phone.replace(/[^+\d]/g, '');
+                const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(message)}&apikey=${whatsappConfig.apiKey}`;
+                await fetch(url);
+                return true;
+            } catch (e) { return false; }
         }
 
-        function subscribeToSymbol(symbol) {
-            if (derivWs && derivWs.readyState === WebSocket.OPEN) {
-                derivWs.send(JSON.stringify({ ticks: symbol, subscribe: 1 }));
+        async function testWhatsApp() {
+            saveWhatsAppConfig();
+            if (!whatsappConfig.phone || !whatsappConfig.apiKey) {
+                showNotif('⚠️', t('fillPhoneApi'), 'error');
+                return;
             }
+            const msg = `🧪 TEST\n📱 Alertes Deriv\n⏰ ${new Date().toLocaleString(currentLang === 'fr' ? 'fr-FR' : 'en-US')}\n✅ Configuration OK!`;
+            const ok = await sendWhatsAppAlert(msg);
+            showNotif(ok ? t('testSuccess') : t('testFailed'), ok ? t('whatsappSent') : t('checkConfig'), ok ? 'whatsapp' : 'error');
+        }
+
+        function saveWhatsAppConfig() {
+            whatsappConfig = { phone: document.getElementById('whatsappPhone').value, apiKey: document.getElementById('whatsappApiKey').value };
+            try { localStorage.setItem('whatsappConfig', JSON.stringify(whatsappConfig)); } catch(e) {}
+        }
+
+        // =============================================
+        // TELEGRAM
+        // =============================================
+
+        async function sendTelegramAlert(message) {
+            if (!telegramConfig.botToken || !telegramConfig.chatId) return false;
+            try {
+                const url = `https://api.telegram.org/bot${telegramConfig.botToken}/sendMessage`;
+                const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: telegramConfig.chatId, text: message, parse_mode: 'Markdown' }) });
+                const data = await response.json();
+                return data.ok === true;
+            } catch (e) { return false; }
+        }
+
+        async function testTelegram() {
+            saveTelegramConfig();
+            if (!telegramConfig.botToken || !telegramConfig.chatId) {
+                showNotif('⚠️', t('fillBotChatId'), 'error');
+                return;
+            }
+            const msg = `🧪 *TEST*\n📱 Alertes Deriv\n⏰ ${new Date().toLocaleString(currentLang === 'fr' ? 'fr-FR' : 'en-US')}\n✅ Configuration OK!`;
+            const ok = await sendTelegramAlert(msg);
+            showNotif(ok ? t('testSuccess') : t('testFailed'), ok ? t('telegramSent') : t('checkBotToken'), ok ? 'telegram' : 'error');
+        }
+
+        function saveTelegramConfig() {
+            telegramConfig = { botToken: document.getElementById('telegramBotToken').value, chatId: document.getElementById('telegramChatId').value };
+            try { localStorage.setItem('telegramConfig', JSON.stringify(telegramConfig)); } catch(e) {}
+        }
+
+        // =============================================
+        // SYMBOL SELECTORS
+        // =============================================
+
+        function populateMarkets() {
+            const select = document.getElementById('marketSelect');
+            select.innerHTML = `<option value="">${t('chooseMarket')}</option>`;
+            Object.entries(MARKETS).forEach(([key, market]) => {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = market.name;
+                select.appendChild(opt);
+            });
+        }
+
+        function updateCategories() {
+            const marketKey = document.getElementById('marketSelect').value;
+            const categorySelect = document.getElementById('categorySelect');
+            const symbolSelect = document.getElementById('symbolSelect');
+            const comingSoonBox = document.getElementById('comingSoonBox');
+            const symbolGroup = document.getElementById('symbolGroup');
+            const priceDisplayBox = document.getElementById('priceDisplayBox');
+
+            categorySelect.innerHTML = `<option value="">${t('chooseCategory')}</option>`;
+            symbolSelect.innerHTML = `<option value="">${t('chooseSymbol')}</option>`;
+            document.getElementById('currentPrice').textContent = '--';
+
+            if (marketKey === 'weltrade-synthetic') {
+                isWeltradeSelected = true;
+                comingSoonBox.style.display = 'block';
+                symbolGroup.style.display = 'none';
+                priceDisplayBox.style.display = 'none';
+                const market = MARKETS[marketKey];
+                Object.entries(market.categories).forEach(([key, category]) => {
+                    const opt = document.createElement('option');
+                    opt.value = key;
+                    opt.textContent = category.name;
+                    categorySelect.appendChild(opt);
+                });
+                return;
+            }
+
+            isWeltradeSelected = false;
+            comingSoonBox.style.display = 'none';
+            symbolGroup.style.display = 'block';
+            priceDisplayBox.style.display = 'flex';
+
+            if (!marketKey || !MARKETS[marketKey]) return;
+
+            const market = MARKETS[marketKey];
+            Object.entries(market.categories).forEach(([key, category]) => {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = category.name;
+                categorySelect.appendChild(opt);
+            });
+        }
+
+        function updateSymbols() {
+            const marketKey = document.getElementById('marketSelect').value;
+            const categoryKey = document.getElementById('categorySelect').value;
+            const symbolSelect = document.getElementById('symbolSelect');
+            const comingSoonBox = document.getElementById('comingSoonBox');
+            const symbolGroup = document.getElementById('symbolGroup');
+            const priceDisplayBox = document.getElementById('priceDisplayBox');
+
+            symbolSelect.innerHTML = `<option value="">${t('chooseSymbol')}</option>`;
+            document.getElementById('currentPrice').textContent = '--';
+
+            if (marketKey === 'weltrade-synthetic') {
+                comingSoonBox.style.display = 'block';
+                symbolGroup.style.display = 'none';
+                priceDisplayBox.style.display = 'none';
+                return;
+            }
+
+            comingSoonBox.style.display = 'none';
+            symbolGroup.style.display = 'block';
+            priceDisplayBox.style.display = 'flex';
+
+            if (!marketKey || !categoryKey) return;
+
+            const market = MARKETS[marketKey];
+            const symbols = market?.categories[categoryKey]?.symbols;
+            if (!symbols) return;
+
+            Object.entries(symbols).forEach(([key, name]) => {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = name;
+                symbolSelect.appendChild(opt);
+            });
+
+            Object.keys(symbols).forEach(sym => {
+                if (market.source === 'deriv') subscribeDerivSymbol(sym);
+                else subscribeFinnhubSymbol(sym);
+            });
         }
 
         function updateCurrentPrice() {
-            const symbol = document.getElementById('alertSymbol').value;
-            const priceDisplay = document.getElementById('currentPriceDisplay');
+            const symbol = document.getElementById('symbolSelect').value;
+            if (symbol && prices[symbol]) {
+                document.getElementById('currentPrice').textContent = formatPrice(prices[symbol]);
+            } else {
+                document.getElementById('currentPrice').textContent = '--';
+            }
 
             if (symbol) {
-                priceDisplay.style.display = 'block';
-                subscribeToSymbol(symbol);
-                updatePriceDisplay(symbol);
-            } else {
-                priceDisplay.style.display = 'none';
+                const marketKey = document.getElementById('marketSelect').value;
+                const market = MARKETS[marketKey];
+                if (market?.source === 'deriv') subscribeDerivSymbol(symbol);
+                else subscribeFinnhubSymbol(symbol);
             }
         }
 
-        function updatePriceDisplay(symbol) {
-            const selectedSymbol = document.getElementById('alertSymbol').value;
-            if (symbol === selectedSymbol && prices[symbol]) {
-                document.getElementById('currentPriceValue').textContent = prices[symbol].toFixed(5);
+        function selectSymbolFromGrid(symbol) {
+            for (const [marketKey, market] of Object.entries(MARKETS)) {
+                if (market.comingSoon) continue;
+                for (const [categoryKey, category] of Object.entries(market.categories)) {
+                    if (category.symbols[symbol]) {
+                        document.getElementById('marketSelect').value = marketKey;
+                        updateCategories();
+                        document.getElementById('categorySelect').value = categoryKey;
+                        updateSymbols();
+                        document.getElementById('symbolSelect').value = symbol;
+                        updateCurrentPrice();
+                        document.querySelector('.card').scrollIntoView({ behavior: 'smooth' });
+                        return;
+                    }
+                }
             }
         }
 
-        // Server Status
-        async function checkServerStatus() {
-            try {
-                const response = await fetch(`${SERVER_URL}/health`);
-                const data = await response.json();
+        // =============================================
+        // FAVORITES
+        // =============================================
 
-                document.getElementById('serverStatus').classList.add('online');
-                document.getElementById('serverStatusText').textContent = 'En ligne';
-            } catch (error) {
-                document.getElementById('serverStatus').classList.remove('online');
-                document.getElementById('serverStatusText').textContent = 'Hors ligne';
-            }
+        function toggleFavorite(symbol, event) {
+            event.stopPropagation();
+            const index = favorites.indexOf(symbol);
+            if (index > -1) favorites.splice(index, 1);
+            else favorites.push(symbol);
+            saveFavorites();
+            renderPricesGrid();
         }
 
-        // Alerts Management
-        async function loadAlerts() {
-            try {
-                const response = await fetch(`${SERVER_URL}/alerts/${currentLicenseKey}`);
-                alerts = await response.json();
-                renderAlerts();
-            } catch (error) {
-                console.error('Load alerts error:', error);
-            }
-        }
+        function saveFavorites() { try { localStorage.setItem('favorites', JSON.stringify(favorites)); } catch(e) {} }
+        function loadFavorites() { try { favorites = JSON.parse(localStorage.getItem('favorites') || '[]'); } catch(e) { favorites = []; } }
 
-        function renderAlerts() {
-            const container = document.getElementById('alertsList');
+        // =============================================
+        // PRICES GRID
+        // =============================================
 
-            document.getElementById('totalAlerts').textContent = alerts.length;
-            document.getElementById('triggeredAlerts').textContent = alerts.filter(a => a.triggered).length;
+        function renderPriceCategoryTabs() {
+            const tabs = document.getElementById('priceCategoryTabs');
+            const allCategories = [];
 
-            if (alerts.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-bell-slash"></i>
-                        <p>Aucune alerte configurée</p>
-                    </div>
-                `;
-                return;
-            }
+            Object.entries(MARKETS).forEach(([marketKey, market]) => {
+                if (market.comingSoon) return;
+                Object.entries(market.categories).forEach(([categoryKey, category]) => {
+                    allCategories.push({ key: `${marketKey}:${categoryKey}`, name: category.name });
+                });
+            });
 
-            container.innerHTML = alerts.map(alert => `
-                <div class="alert-card ${alert.triggered ? 'triggered' : ''}">
-                    <div class="alert-info">
-                        <div class="alert-name">${alert.name}</div>
-                        <div class="alert-details">
-                            ${alert.symbol}
-                            <span class="condition ${alert.condition}">
-                                <i class="fas fa-arrow-${alert.condition === 'above' ? 'up' : 'down'}"></i>
-                                ${alert.price}
-                            </span>
-                            ${alert.triggered ? '<span style="color: var(--success); margin-left: 10px;">✓ Déclenché</span>' : ''}
-                        </div>
-                    </div>
-                    <div class="alert-actions">
-                        ${alert.triggered ? `
-                            <button class="btn-icon" onclick="resetAlert('${alert.id}')" title="Réactiver">
-                                <i class="fas fa-redo"></i>
-                            </button>
-                        ` : ''}
-                        <button class="btn-icon delete" onclick="deleteAlert('${alert.id}')" title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
+            tabs.innerHTML = allCategories.map(cat => `
+                <button class="category-tab ${cat.key === currentPriceCategory ? 'active' : ''}" onclick="setPriceCategory('${cat.key}')">${cat.name}</button>
             `).join('');
         }
 
-        function openAlertModal() {
-            document.getElementById('alertModal').classList.add('visible');
-            document.getElementById('alertName').value = '';
-            document.getElementById('alertSymbol').value = '';
-            document.getElementById('alertPrice').value = '';
-            document.getElementById('currentPriceDisplay').style.display = 'none';
-            selectedCondition = null;
-            document.querySelectorAll('.condition-btn').forEach(btn => btn.classList.remove('selected'));
-        }
+        function setPriceCategory(categoryKey) {
+            currentPriceCategory = categoryKey;
+            renderPriceCategoryTabs();
+            renderPricesGrid();
 
-        function closeAlertModal() {
-            document.getElementById('alertModal').classList.remove('visible');
-        }
-
-        function selectCondition(condition) {
-            selectedCondition = condition;
-            document.querySelectorAll('.condition-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            document.querySelector(`.condition-btn.${condition}`).classList.add('selected');
-        }
-
-        async function createAlert() {
-            const name = document.getElementById('alertName').value.trim();
-            const symbol = document.getElementById('alertSymbol').value;
-            const price = parseFloat(document.getElementById('alertPrice').value);
-
-            if (!name || !symbol || !price || !selectedCondition) {
-                showToast('Veuillez remplir tous les champs', true);
-                return;
-            }
-
-            try {
-                const response = await fetch(`${SERVER_URL}/alerts/${currentLicenseKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, symbol, price, condition: selectedCondition })
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    closeAlertModal();
-                    loadAlerts();
-                    showToast('Alerte créée avec succès');
+            const [marketKey, catKey] = categoryKey.split(':');
+            const market = MARKETS[marketKey];
+            if (market && !market.comingSoon) {
+                const symbols = market?.categories[catKey]?.symbols;
+                if (symbols) {
+                    Object.keys(symbols).forEach(sym => {
+                        if (market.source === 'deriv') subscribeDerivSymbol(sym);
+                        else subscribeFinnhubSymbol(sym);
+                    });
                 }
-            } catch (error) {
-                showToast('Erreur lors de la création', true);
             }
         }
 
-        async function deleteAlert(alertId) {
-            try {
-                await fetch(`${SERVER_URL}/alerts/${currentLicenseKey}/${alertId}`, { method: 'DELETE' });
-                loadAlerts();
-                showToast('Alerte supprimée');
-            } catch (error) {
-                showToast('Erreur lors de la suppression', true);
+        function renderPricesGrid() {
+            const favSection = document.getElementById('favoritesSection');
+            const favGrid = document.getElementById('favoritesGrid');
+
+            if (favorites.length > 0) {
+                favSection.style.display = 'block';
+                favGrid.innerHTML = favorites.map(symbol => {
+                    const name = ALL_SYMBOLS[symbol] || symbol;
+                    const price = prices[symbol];
+                    return `
+                        <div class="price-card favorite" onclick="selectSymbolFromGrid('${symbol}')">
+                            <div class="price-card-header">
+                                <div class="price-card-name">${name}</div>
+                                <button class="favorite-btn active" onclick="toggleFavorite('${symbol}', event)">⭐</button>
+                            </div>
+                            <div class="price-card-value" id="price-${symbol.replace(/[:.]/g, '_')}">${price ? formatPrice(price) : '--'}</div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                favSection.style.display = 'none';
             }
-        }
 
-        async function resetAlert(alertId) {
-            try {
-                await fetch(`${SERVER_URL}/alerts/${currentLicenseKey}/${alertId}/reset`, { method: 'POST' });
-                loadAlerts();
-                showToast('Alerte réactivée');
-            } catch (error) {
-                showToast('Erreur lors de la réactivation', true);
-            }
-        }
+            const grid = document.getElementById('pricesGrid');
+            const [marketKey, catKey] = currentPriceCategory.split(':');
+            const market = MARKETS[marketKey];
 
-        // Config Toggles
-        function toggleConfig(type) {
-            const toggle = document.getElementById(`${type}Toggle`);
-            const config = document.getElementById(`${type}Config`);
-
-            toggle.classList.toggle('active');
-            config.classList.toggle('visible');
-        }
-
-        async function saveWhatsAppConfig() {
-            const phone = document.getElementById('whatsappPhone').value.trim();
-            if (!phone) {
-                showToast('Veuillez entrer un numéro', true);
+            if (market && market.comingSoon) {
+                grid.innerHTML = `<div class="coming-soon-box" style="grid-column: 1 / -1;"><div class="coming-soon-icon">🚧</div><div class="coming-soon-title">${t('comingSoon')}</div><div class="coming-soon-text">${t('comingSoonText')}</div></div>`;
                 return;
             }
 
+            const symbols = market?.categories[catKey]?.symbols || {};
+            grid.innerHTML = Object.entries(symbols).map(([symbol, name]) => {
+                const price = prices[symbol];
+                const isFav = favorites.includes(symbol);
+                const safeId = symbol.replace(/[:.]/g, '_');
+                return `
+                    <div class="price-card ${isFav ? 'favorite' : ''}" onclick="selectSymbolFromGrid('${symbol}')">
+                        <div class="price-card-header">
+                            <div class="price-card-name">${name}</div>
+                            <button class="favorite-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite('${symbol}', event)">${isFav ? '⭐' : '☆'}</button>
+                        </div>
+                        <div class="price-card-value" id="price-${safeId}">${price ? formatPrice(price) : '--'}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatPrice(price) {
+            if (price >= 1000) return price.toFixed(2);
+            if (price >= 1) return price.toFixed(4);
+            return price.toFixed(5);
+        }
+
+        // =============================================
+        // DERIV WEBSOCKET
+        // =============================================
+
+        function connectDerivWebSocket() {
+            if (derivWs && derivWs.readyState === WebSocket.OPEN) return;
             try {
-                await fetch(`${SERVER_URL}/config/${currentLicenseKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ whatsapp: phone })
-                });
-                showToast('WhatsApp configuré');
-            } catch (error) {
-                showToast('Erreur de sauvegarde', true);
+                derivWs = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${DERIV_APP_ID}`);
+                derivWs.onopen = () => {
+                    updateConnectionStatus('deriv', true);
+                    derivReconnectAttempts = 0;
+                    Object.keys(DERIV_SYMBOLS).slice(0, 5).forEach(subscribeDerivSymbol);
+                    favorites.filter(s => DERIV_SYMBOLS[s]).forEach(subscribeDerivSymbol);
+                    alerts.filter(a => DERIV_SYMBOLS[a.symbol]).forEach(a => subscribeDerivSymbol(a.symbol));
+                };
+                derivWs.onmessage = (msg) => {
+                    try {
+                        const data = JSON.parse(msg.data);
+                        if (data.tick) updatePrice(data.tick.symbol, data.tick.quote);
+                    } catch (e) {}
+                };
+                derivWs.onerror = () => updateConnectionStatus('deriv', false);
+                derivWs.onclose = () => {
+                    updateConnectionStatus('deriv', false);
+                    if (serviceRunning) {
+                        const delay = Math.min(30000, 1000 * Math.pow(2, derivReconnectAttempts));
+                        derivReconnectAttempts++;
+                        setTimeout(connectDerivWebSocket, delay);
+                    }
+                };
+            } catch (e) { setTimeout(connectDerivWebSocket, 5000); }
+        }
+
+        function subscribeDerivSymbol(symbol) {
+            if (!symbol || derivSubscribed.has(symbol) || !DERIV_SYMBOLS[symbol]) return;
+            if (derivWs && derivWs.readyState === WebSocket.OPEN) {
+                derivWs.send(JSON.stringify({ ticks: symbol, subscribe: 1 }));
+                derivSubscribed.add(symbol);
             }
         }
 
-        async function saveTelegramConfig() {
-            const botToken = document.getElementById('telegramToken').value.trim();
-            const chatId = document.getElementById('telegramChatId').value.trim();
+        // =============================================
+        // FINNHUB WEBSOCKET
+        // =============================================
 
-            if (!botToken || !chatId) {
-                showToast('Veuillez remplir tous les champs', true);
+        function connectFinnhubWebSocket() {
+            if (finnhubWs && finnhubWs.readyState === WebSocket.OPEN) return;
+            try {
+                finnhubWs = new WebSocket(`wss://ws.finnhub.io?token=${FINNHUB_API_KEY}`);
+                finnhubWs.onopen = () => {
+                    updateConnectionStatus('finnhub', true);
+                    finnhubReconnectAttempts = 0;
+                    FINNHUB_SYMBOL_LIST.forEach(subscribeFinnhubSymbol);
+                    favorites.filter(s => FINNHUB_SYMBOL_LIST.includes(s)).forEach(subscribeFinnhubSymbol);
+                    alerts.filter(a => FINNHUB_SYMBOL_LIST.includes(a.symbol)).forEach(a => subscribeFinnhubSymbol(a.symbol));
+                };
+                finnhubWs.onmessage = (msg) => {
+                    try {
+                        const data = JSON.parse(msg.data);
+                        if (data.type === 'trade' && data.data) {
+                            data.data.forEach(trade => { if (trade.s && trade.p) updatePrice(trade.s, trade.p); });
+                        }
+                    } catch (e) {}
+                };
+                finnhubWs.onerror = () => updateConnectionStatus('finnhub', false);
+                finnhubWs.onclose = () => {
+                    updateConnectionStatus('finnhub', false);
+                    finnhubSubscribed.clear();
+                    if (serviceRunning) {
+                        const delay = Math.min(30000, 1000 * Math.pow(2, finnhubReconnectAttempts));
+                        finnhubReconnectAttempts++;
+                        setTimeout(connectFinnhubWebSocket, delay);
+                    }
+                };
+            } catch (e) { setTimeout(connectFinnhubWebSocket, 5000); }
+        }
+
+        function subscribeFinnhubSymbol(symbol) {
+            if (!symbol || finnhubSubscribed.has(symbol) || !FINNHUB_SYMBOL_LIST.includes(symbol)) return;
+            if (finnhubWs && finnhubWs.readyState === WebSocket.OPEN) {
+                finnhubWs.send(JSON.stringify({ type: 'subscribe', symbol: symbol }));
+                finnhubSubscribed.add(symbol);
+            }
+        }
+
+        function updateConnectionStatus(source, connected) {
+            const dotId = source === 'deriv' ? 'derivDot' : 'finnhubDot';
+            const dot = document.getElementById(dotId);
+            if (dot) dot.className = `status-dot ${connected ? 'connected' : ''}`;
+        }
+
+        // =============================================
+        // PRICE UPDATES & ALERTS
+        // =============================================
+
+        function updatePrice(symbol, price) {
+            prices[symbol] = price;
+            const selected = document.getElementById('symbolSelect').value;
+            if (selected === symbol) document.getElementById('currentPrice').textContent = formatPrice(price);
+            const safeId = symbol.replace(/[:.]/g, '_');
+            const card = document.getElementById(`price-${safeId}`);
+            if (card) card.textContent = formatPrice(price);
+            checkAlerts(symbol, price);
+        }
+
+        function checkAlerts(symbol, currentPrice) {
+            const toRemove = [];
+            alerts.forEach((alert, index) => {
+                if (alert.symbol !== symbol) return;
+                const key = `${alert.id}`;
+                const now = Date.now();
+                if (lastNotificationTime[key] && (now - lastNotificationTime[key]) < 60000) return;
+
+                let triggered = false;
+                if (alert.type === 'above' && currentPrice >= alert.price) triggered = true;
+                if (alert.type === 'below' && currentPrice <= alert.price) triggered = true;
+
+                if (triggered) {
+                    lastNotificationTime[key] = now;
+                    alertHistory.unshift({ ...alert, triggeredAt: new Date().toISOString(), triggeredPrice: currentPrice, historyId: Date.now() });
+                    if (alertHistory.length > 100) alertHistory = alertHistory.slice(0, 100);
+                    saveData();
+                    renderHistory();
+                    triggerAlertNotifications(alert, currentPrice);
+                    if (alert.trigger === 'once') toRemove.push(index);
+                }
+            });
+
+            if (toRemove.length > 0) {
+                toRemove.reverse().forEach(i => alerts.splice(i, 1));
+                saveData();
+                renderAlerts();
+            }
+        }
+
+        async function triggerAlertNotifications(alert, price) {
+            const symbolName = ALL_SYMBOLS[alert.symbol] || alert.symbol;
+            const direction = alert.type === 'above' ? t('ABOVE') : t('BELOW');
+
+            if ('vibrate' in navigator) navigator.vibrate([200, 100, 200, 100, 200]);
+
+            const msg = `🔔 *${t('alertTriggered').replace('🔔 ', '')}*\n📊 ${symbolName}\n💰 ${t('currentPrice').replace(':', '')} ${formatPrice(price)}\n🎯 ${t('thresholdPrice')}: ${alert.price} (${direction})\n⏰ ${new Date().toLocaleString(currentLang === 'fr' ? 'fr-FR' : 'en-US')}${alert.note ? `\n📝 ${alert.note}` : ''}`;
+
+            if (whatsappConfig.phone && whatsappConfig.apiKey) await sendWhatsAppAlert(msg);
+            if (telegramConfig.botToken && telegramConfig.chatId) await sendTelegramAlert(msg);
+
+            showNotif(t('alertTriggered'), `${symbolName} - ${alert.type === 'above' ? t('aboveOf') : t('belowOf')} ${alert.price}`);
+        }
+
+        // =============================================
+        // SERVICE
+        // =============================================
+
+        function toggleService() {
+            if (serviceRunning) {
+                showModal(t('stopService'), t('stopServiceText'), () => {
+                    serviceRunning = false;
+                    updateServiceUI(false);
+                    if (derivWs) derivWs.close();
+                    if (finnhubWs) finnhubWs.close();
+                });
+            } else {
+                serviceRunning = true;
+                updateServiceUI(true);
+                connectDerivWebSocket();
+                connectFinnhubWebSocket();
+            }
+        }
+
+        function updateServiceUI(active) {
+            const bar = document.getElementById('serviceBar');
+            const text = document.getElementById('serviceText');
+            const btn = document.getElementById('serviceBtn');
+            if (active) {
+                bar.classList.remove('inactive');
+                text.textContent = t('serviceActive');
+                btn.textContent = t('active');
+            } else {
+                bar.classList.add('inactive');
+                text.textContent = t('serviceStopped');
+                btn.textContent = t('start');
+            }
+        }
+
+        // =============================================
+        // UI FUNCTIONS
+        // =============================================
+
+        function showNotif(title, text, type = 'success') {
+            const el = document.createElement('div');
+            el.className = `notification ${type}`;
+            el.innerHTML = `<div class="notif-title">${title}</div><div class="notif-text">${text}</div>`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 4000);
+        }
+
+        function showModal(title, text, onConfirm) {
+            const el = document.createElement('div');
+            el.className = 'modal';
+            el.innerHTML = `
+                <div class="modal-box">
+                    <div class="modal-title">${title}</div>
+                    <div class="modal-text">${text}</div>
+                    <div class="modal-btns">
+                        <button class="btn" style="background:#e5e7eb;color:#374151" onclick="this.closest('.modal').remove()">${t('cancel')}</button>
+                        <button class="btn btn-danger" id="modalConfirm">${t('confirm')}</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(el);
+            document.getElementById('modalConfirm').onclick = () => { el.remove(); onConfirm(); };
+        }
+
+        function createAlert() {
+            if (isWeltradeSelected) { showNotif('⚠️', t('weltradeNotAvailable'), 'error'); return; }
+
+            const symbol = document.getElementById('symbolSelect').value;
+            const type = document.getElementById('crossType').value;
+            const price = parseFloat(document.getElementById('thresholdValue').value);
+            const trigger = document.getElementById('triggerType').value;
+            const note = document.getElementById('alertNote').value.trim();
+
+            if (!symbol) { showNotif('⚠️', t('selectSymbol'), 'error'); return; }
+            if (!price || price <= 0) { showNotif('⚠️', t('invalidPrice'), 'error'); return; }
+
+            const hasWhatsApp = whatsappConfig.phone && whatsappConfig.apiKey;
+            const hasTelegram = telegramConfig.botToken && telegramConfig.chatId;
+            if (!hasWhatsApp && !hasTelegram) { showNotif('⚠️', t('configureNotif'), 'error'); return; }
+
+            alerts.push({ id: Date.now(), symbol, type, price, trigger, note });
+            saveData();
+            renderAlerts();
+
+            if (DERIV_SYMBOLS[symbol]) subscribeDerivSymbol(symbol);
+            else subscribeFinnhubSymbol(symbol);
+
+            document.getElementById('thresholdValue').value = '';
+            document.getElementById('alertNote').value = '';
+            showNotif(t('alertCreated'), ALL_SYMBOLS[symbol] || symbol);
+        }
+
+        function deleteAlert(id) { alerts = alerts.filter(a => a.id !== id); saveData(); renderAlerts(); }
+        function deleteHistory(id) { alertHistory = alertHistory.filter(h => h.historyId !== id); saveData(); renderHistory(); }
+
+        function clearHistory() {
+            showModal(t('clearHistory'), t('clearHistoryText'), () => {
+                alertHistory = [];
+                saveData();
+                renderHistory();
+                showNotif('🧹', t('historyCleared'));
+            });
+        }
+
+        function renderAlerts() {
+            const el = document.getElementById('alertsList');
+            document.getElementById('alertCount').textContent = alerts.length;
+
+            if (alerts.length === 0) {
+                el.innerHTML = `<div class="empty-state"><div class="empty-icon">🔔</div><div>${t('noActiveAlerts')}</div></div>`;
                 return;
             }
 
+            el.innerHTML = alerts.map(a => {
+                const symbolName = ALL_SYMBOLS[a.symbol] || a.symbol;
+                const isFinnhub = FINNHUB_SYMBOL_LIST.includes(a.symbol);
+                return `
+                    <div class="alert-item">
+                        <div class="alert-info">
+                            <div class="alert-symbol">${symbolName} ${isFinnhub ? '<span class="badge badge-finnhub">Finnhub</span>' : ''}</div>
+                            <div class="alert-meta">
+                                <span class="badge ${a.type === 'above' ? 'badge-up' : 'badge-down'}">${a.type === 'above' ? t('above') : t('below')}</span>
+                                <span class="badge badge-price">${a.price}</span>
+                                <span class="badge">${a.trigger === 'once' ? '1x' : '∞'}</span>
+                            </div>
+                            ${a.note ? `<div class="alert-note">📝 ${a.note}</div>` : ''}
+                        </div>
+                        <button class="btn btn-danger btn-sm" onclick="deleteAlert(${a.id})">🗑️</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderHistory() {
+            const el = document.getElementById('historyList');
+            const btn = document.getElementById('clearBtn');
+
+            if (alertHistory.length === 0) {
+                el.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div>${t('noHistory')}</div></div>`;
+                btn.style.display = 'none';
+                return;
+            }
+
+            btn.style.display = 'block';
+            el.innerHTML = alertHistory.map(h => {
+                const symbolName = ALL_SYMBOLS[h.symbol] || h.symbol;
+                const time = getTimeAgo(new Date(h.triggeredAt));
+                return `
+                    <div class="alert-item history">
+                        <div class="alert-info">
+                            <div class="alert-symbol">${symbolName}</div>
+                            <div class="alert-meta">
+                                <span class="badge badge-time">${time}</span>
+                                <span class="badge ${h.type === 'above' ? 'badge-up' : 'badge-down'}">${h.type === 'above' ? '📈' : '📉'}</span>
+                                <span class="badge badge-price">${formatPrice(h.triggeredPrice)}</span>
+                            </div>
+                            ${h.note ? `<div class="alert-note">📝 ${h.note}</div>` : ''}
+                        </div>
+                        <button class="btn btn-danger btn-sm" onclick="deleteHistory(${h.historyId})">🗑️</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getTimeAgo(date) {
+            const mins = Math.floor((Date.now() - date) / 60000);
+            if (mins < 1) return currentLang === 'fr' ? 'maintenant' : 'now';
+            if (mins < 60) return `${mins}min`;
+            const hrs = Math.floor(mins / 60);
+            if (hrs < 24) return `${hrs}h`;
+            return `${Math.floor(hrs / 24)}${currentLang === 'fr' ? 'j' : 'd'}`;
+        }
+
+        // =============================================
+        // DATA PERSISTENCE
+        // =============================================
+
+        function loadData() {
             try {
-                await fetch(`${SERVER_URL}/config/${currentLicenseKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ telegram: { botToken, chatId } })
-                });
-                showToast('Telegram configuré');
-            } catch (error) {
-                showToast('Erreur de sauvegarde', true);
+                alerts = JSON.parse(localStorage.getItem('alerts') || '[]');
+                alertHistory = JSON.parse(localStorage.getItem('alertHistory') || '[]');
+                whatsappConfig = JSON.parse(localStorage.getItem('whatsappConfig') || '{}');
+                telegramConfig = JSON.parse(localStorage.getItem('telegramConfig') || '{}');
+            } catch (e) {
+                alerts = []; alertHistory = []; whatsappConfig = {}; telegramConfig = {};
             }
         }
 
-        // Navigation
-        function showPage(page) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-            document.getElementById(`${page}Page`).classList.add('active');
-            event.currentTarget.classList.add('active');
+        function saveData() {
+            try {
+                localStorage.setItem('alerts', JSON.stringify(alerts));
+                localStorage.setItem('alertHistory', JSON.stringify(alertHistory));
+            } catch (e) {}
         }
 
-        // Toast
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast visible' + (isError ? ' error' : '');
-
-            setTimeout(() => {
-                toast.classList.remove('visible');
-            }, 3000);
+        function setupInputListeners() {
+            document.getElementById('whatsappPhone').addEventListener('input', saveWhatsAppConfig);
+            document.getElementById('whatsappApiKey').addEventListener('input', saveWhatsAppConfig);
+            document.getElementById('telegramBotToken').addEventListener('input', saveTelegramConfig);
+            document.getElementById('telegramChatId').addEventListener('input', saveTelegramConfig);
         }
+
+        // =============================================
+        // INIT
+        // =============================================
+
+        function initApp() {
+            loadData();
+            loadFavorites();
+            loadLanguage();
+            populateMarkets();
+
+            if (whatsappConfig.phone) document.getElementById('whatsappPhone').value = whatsappConfig.phone;
+            if (whatsappConfig.apiKey) document.getElementById('whatsappApiKey').value = whatsappConfig.apiKey;
+            if (telegramConfig.botToken) document.getElementById('telegramBotToken').value = telegramConfig.botToken;
+            if (telegramConfig.chatId) document.getElementById('telegramChatId').value = telegramConfig.chatId;
+
+            currentPriceCategory = 'deriv-synthetic:volatility';
+            renderPriceCategoryTabs();
+            renderPricesGrid();
+            renderAlerts();
+            renderHistory();
+
+            setupInputListeners();
+            connectDerivWebSocket();
+            connectFinnhubWebSocket();
+        }
+
+        // =============================================
+        // START
+        // =============================================
+
+        loadLanguage();
+        setupLicenseInput();
+        checkLicense();
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                if (!derivWs || derivWs.readyState !== WebSocket.OPEN) connectDerivWebSocket();
+                if (!finnhubWs || finnhubWs.readyState !== WebSocket.OPEN) connectFinnhubWebSocket();
+            }
+        });
     </script>
 </body>
 </html>
