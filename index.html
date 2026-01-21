@@ -1048,6 +1048,8 @@
                 licenseInvalid: "❌ Licence invalide ou non trouvée",
                 licenseExpired: "⚠️ Licence expirée le",
                 licenseDisabled: "❌ Licence désactivée",
+                licenseUsedElsewhere: "❌ Cette licence est déjà utilisée sur un autre appareil",
+                contactAdmin: "Contactez l'administrateur pour débloquer votre licence.",
                 connectionError: "❌ Erreur de connexion. Vérifiez votre internet.",
                 verifying: "⏳ Vérification...",
                 settings: "⚙️ Paramètres",
@@ -1125,6 +1127,8 @@
                 licenseInvalid: "❌ Invalid or not found license",
                 licenseExpired: "⚠️ License expired on",
                 licenseDisabled: "❌ License disabled",
+                licenseUsedElsewhere: "❌ This license is already used on another device",
+                contactAdmin: "Contact the administrator to unlock your license.",
                 connectionError: "❌ Connection error. Check your internet.",
                 verifying: "⏳ Verifying...",
                 settings: "⚙️ Settings",
@@ -1253,9 +1257,78 @@
         // CONFIGURATION & API KEYS
         // =============================================
 
-        const FIREBASE_URL = 'https://alertes-deriv-licenses-e0195-default-rtdb.europe-west1.firebasedatabase.app';
+        const FIREBASE_URL = 'https://alertes-deriv-licenses-default-rtdb.europe-west1.firebasedatabase.app';
         const DERIV_APP_ID = '1089';
         const FINNHUB_API_KEY = 'd5cc5opr01qsbmgjs7r0d5cc5opr01qsbmgjs7rg';
+
+        // =============================================
+        // BROWSER FINGERPRINT - Initial Use System
+        // =============================================
+
+        let currentBrowserId = null;
+
+        async function generateBrowserFingerprint() {
+            const components = [];
+            components.push(navigator.userAgent);
+            components.push(navigator.language);
+            components.push(Intl.DateTimeFormat().resolvedOptions().timeZone);
+            components.push(`${screen.width}x${screen.height}x${screen.colorDepth}`);
+            components.push(navigator.platform);
+            components.push(navigator.hardwareConcurrency || 'unknown');
+            components.push(navigator.deviceMemory || 'unknown');
+
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 200;
+                canvas.height = 50;
+                ctx.textBaseline = 'top';
+                ctx.font = '14px Arial';
+                ctx.fillStyle = '#f60';
+                ctx.fillRect(125, 1, 62, 20);
+                ctx.fillStyle = '#069';
+                ctx.fillText('AlertesDeriv!', 2, 15);
+                ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
+                ctx.fillText('AlertesDeriv!', 4, 17);
+                components.push(canvas.toDataURL());
+            } catch (e) {
+                components.push('canvas-error');
+            }
+
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (debugInfo) {
+                        components.push(gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL));
+                        components.push(gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL));
+                    }
+                }
+            } catch (e) {
+                components.push('webgl-error');
+            }
+
+            const plugins = [];
+            for (let i = 0; i < navigator.plugins.length; i++) {
+                plugins.push(navigator.plugins[i].name);
+            }
+            components.push(plugins.join(','));
+
+            const fingerprint = components.join('|||');
+            const hash = await hashString(fingerprint);
+            return hash;
+        }
+
+        async function hashString(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            const shortHash = hashHex.substring(0, 16).toUpperCase();
+            return `${shortHash.substring(0,4)}-${shortHash.substring(4,8)}-${shortHash.substring(8,12)}-${shortHash.substring(12,16)}`;
+        }
 
         // =============================================
         // SYMBOLS DATABASE
@@ -1337,7 +1410,6 @@
         let derivReconnectAttempts = 0;
         let finnhubReconnectAttempts = 0;
         let serviceRunning = true;
-        let wakeLock = null;
         let currentPriceCategory = 'deriv-synthetic:volatility';
         let derivSubscribed = new Set();
         let finnhubSubscribed = new Set();
@@ -1365,10 +1437,14 @@
         }
 
         // =============================================
-        // LICENSE VERIFICATION (NO DEVICE ID)
+        // LICENSE VERIFICATION (WITH INITIAL USE)
         // =============================================
 
         async function checkLicense() {
+            // Generate browser fingerprint first
+            currentBrowserId = await generateBrowserFingerprint();
+            console.log('Browser ID:', currentBrowserId);
+
             try {
                 const storedLicense = localStorage.getItem('licenseKey');
                 if (storedLicense) {
@@ -1404,6 +1480,33 @@
                 if (now > expiresAt) {
                     showLicenseStatus(`${t('licenseExpired')} ${expiresAt.toLocaleDateString(currentLang === 'fr' ? 'fr-FR' : 'en-US')}`, 'expired');
                     return false;
+                }
+
+                // =============================================
+                // INITIAL USE - Browser Verification
+                // =============================================
+
+                if (!data.browserId) {
+                    // First use - register this browser
+                    data.browserId = currentBrowserId;
+                    data.firstUseAt = new Date().toISOString();
+
+                    await fetch(`${FIREBASE_URL}/licenses/${licenseKey}.json`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            browserId: currentBrowserId,
+                            firstUseAt: data.firstUseAt
+                        })
+                    });
+
+                    console.log('✅ License linked to this browser:', currentBrowserId);
+                } else {
+                    // Check if same browser
+                    if (data.browserId !== currentBrowserId) {
+                        showLicenseStatus(`${t('licenseUsedElsewhere')}\n${t('contactAdmin')}`, 'error');
+                        return false;
+                    }
                 }
 
                 // SUCCESS!
@@ -2165,3 +2268,4 @@
     </script>
 </body>
 </html>
+
